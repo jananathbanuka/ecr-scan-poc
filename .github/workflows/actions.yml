@@ -9,6 +9,7 @@ jobs:
 
       - name: Docker Image List
         run: |
+          who am i
           docker images
 
       - name: List files in the repository
