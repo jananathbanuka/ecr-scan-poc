@@ -1,20 +1,22 @@
 name: GitHub Actions Demo
 on: [push]
 
-env:
-  AWS_REGION: eu-central-1
+# env:
+#   AWS_REGION: eu-central-1
 
 jobs:
   ScanImage:
     runs-on: e-bot7
     steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
 
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v1
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: ${{ env.AWS_REGION }}
+          aws-region: eu-central-1
 
       - name: Login to Amazon ECR
         id: login-ecr
@@ -28,8 +30,8 @@ jobs:
       - name: Set Docker Image Env
         run: |
           ACCOUNT_ID=$(aws sts get-caller-identity | jq -r '.Account')
-          echo "DOCKER_IMAGE_TO_SCAN=${ACCOUNT_ID}.dkr.ecr.${{ env.AWS_REGION }}.amazonaws.com/ecr-scan-poc:latest" >> $GITHUB_ENV
-          
+          echo "DOCKER_IMAGE_TO_SCAN=${ACCOUNT_ID}.dkr.ecr.eu-central-1.amazonaws.com/ecr-scan-poc:latest" >> $GITHUB_ENV
+
 
       - name: Run Trivy vulnerability scanner
         uses: aquasecurity/trivy-action@master
@@ -40,7 +42,7 @@ jobs:
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          AWS_DEFAULT_REGION: ${{ env.AWS_REGION }}
+          # AWS_DEFAULT_REGION: ${{ env.AWS_REGION }}
 
       - name: Upload Trivy scan results to GitHub Security tab
         uses: github/codeql-action/upload-sarif@v1
