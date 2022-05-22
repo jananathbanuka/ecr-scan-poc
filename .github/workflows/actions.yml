@@ -9,6 +9,8 @@ jobs:
 
       - name: Docker Image List
         run: |
+          echo $AWS_ACCESS_KEY
+          echo AWS_SECRET_KEY
           who am i
           docker images
 
