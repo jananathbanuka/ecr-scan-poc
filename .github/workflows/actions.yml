@@ -21,15 +21,10 @@ jobs:
           # aws ecr describe-repositories
           aws ecr list-images --repository-name ecr-scan-poc
 
-      - name: Pull the image
+      - name: Set Docker Image Env
         run: |
           ACCOUNT_ID=$(aws sts get-caller-identity | jq -r '.Account')
           echo "DOCKER_IMAGE_TO_SCAN=${ACCOUNT_ID}.dkr.ecr.eu-central-1.amazonaws.com/ecr-scan-poc:latest" >> $GITHUB_ENV
-          echo "Github Variables are: ${GITHUB_ENV}"
-
-
-          # docker pull $DOCKER_IMAGE_TO_SCAN
-          docker images
 
       - name: Run Trivy vulnerability scanner
         uses: aquasecurity/trivy-action@master
