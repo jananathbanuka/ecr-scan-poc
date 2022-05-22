@@ -49,7 +49,7 @@ jobs:
         with:
           image-ref: '${{ env.DOCKER_IMAGE_TO_SCAN }}'
           severity: 'HIGH,CRITICAL'
-          format: 'table'
+          # format: 'table'
           # exit-code: '1'
           format: "template"
           # template: "@/contrib/sarif.tpl"
