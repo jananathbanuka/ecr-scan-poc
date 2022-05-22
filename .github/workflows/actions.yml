@@ -1,5 +1,9 @@
 name: GitHub Actions Demo
 on: [push]
+
+env:
+  AWS_REGION: eu-central-1
+
 jobs:
   ScanImage:
     runs-on: e-bot7
@@ -10,7 +14,7 @@ jobs:
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: eu-central-1
+          aws-region: ${{ env.AWS_REGION }}
 
       - name: Login to Amazon ECR
         id: login-ecr
@@ -24,7 +28,7 @@ jobs:
       - name: Set Docker Image Env
         run: |
           ACCOUNT_ID=$(aws sts get-caller-identity | jq -r '.Account')
-          echo "DOCKER_IMAGE_TO_SCAN=${ACCOUNT_ID}.dkr.ecr.eu-central-1.amazonaws.com/ecr-scan-poc:latest" >> $GITHUB_ENV
+          echo "DOCKER_IMAGE_TO_SCAN=${ACCOUNT_ID}.dkr.ecr.${{ env.AWS_REGION }}.amazonaws.com/ecr-scan-poc:latest" >> $GITHUB_ENV
 
       - name: Run Trivy vulnerability scanner
         uses: aquasecurity/trivy-action@master
@@ -37,6 +41,10 @@ jobs:
           severity: 'CRITICAL,HIGH,MEDIUM'
           format: 'sarif'
           output: 'trivy-results.sarif'
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_DEFAULT_REGION: ${{ env.AWS_REGION }}
 
       - name: Upload Trivy scan results to GitHub Security tab
         uses: github/codeql-action/upload-sarif@v1
