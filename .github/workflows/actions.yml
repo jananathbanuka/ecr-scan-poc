@@ -24,8 +24,8 @@ jobs:
       - name: Pull the image
         run: |
           ACCOUNT_ID=$(aws sts get-caller-identity | jq -r '.Account')
-          echo "${ACCOUNT_ID}.dkr.ecr.eu-central-1.amazonaws.com/ecr-scan-poc:latest" >> $DOCKER_IMAGE
-          docker pull $DOCKER_IMAGE
+          echo "${{ env.ACCOUNT_ID }}.dkr.ecr.eu-central-1.amazonaws.com/ecr-scan-poc:latest" >> $DOCKER_IMAGE
+          docker pull ${{ env.DOCKER_IMAGE }}
           docker images
 
       - name: Run Trivy vulnerability scanner
