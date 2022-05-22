@@ -53,8 +53,8 @@ jobs:
           # format: 'table'
           # exit-code: '1'
           format: "sarif"
-          # template: "@/contrib/sarif.tpl"
-          output: "trivy-scan-results.sarif"xw
+          template: "@/contrib/sarif.tpl"
+          output: "trivy-scan-results.sarif"
 
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
