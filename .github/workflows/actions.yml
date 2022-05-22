@@ -1,8 +1,9 @@
 name: GitHub Actions Demo
 on: [push]
 
-# env:
-#   AWS_REGION: eu-central-1
+env:
+  IMAGE: "ecr-scan-poc"
+  IMAGE_ID: "2"
 
 jobs:
   VulnerabilityScanner:
@@ -30,7 +31,7 @@ jobs:
       - name: Set Docker Image Env
         run: |
           ACCOUNT_ID=$(aws sts get-caller-identity | jq -r '.Account')
-          echo "DOCKER_IMAGE_TO_SCAN=${ACCOUNT_ID}.dkr.ecr.eu-central-1.amazonaws.com/ecr-scan-poc:latest" >> $GITHUB_ENV
+          echo "DOCKER_IMAGE_TO_SCAN=${ACCOUNT_ID}.dkr.ecr.eu-central-1.amazonaws.com/${IMAGE}:${IMAGE_ID}" >> $GITHUB_ENV
 
       - name: Trivy Scane - Unknown, Low and Medium Vulnerabilities
         uses: aquasecurity/trivy-action@master
