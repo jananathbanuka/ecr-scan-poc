@@ -5,7 +5,7 @@ on: [push]
 #   AWS_REGION: eu-central-1
 
 jobs:
-  ScanImage:
+  VulnerabilityScanner:
     runs-on: e-bot7
     steps:
       - name: Checkout code
