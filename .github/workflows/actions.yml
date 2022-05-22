@@ -53,7 +53,7 @@ jobs:
           # format: 'table'
           # exit-code: '1'
           format: "sarif"
-          template: "@/contrib/sarif.tpl"
+          # template: "@/contrib/sarif.tpl"
           output: "trivy-scan-results.sarif"xw
 
         env:
