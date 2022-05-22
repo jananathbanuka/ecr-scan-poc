@@ -51,16 +51,20 @@ jobs:
           severity: 'HIGH,CRITICAL'
           format: 'table'
           # exit-code: '1'
-          # output: 'trivy-results.sarif'
+          format: "template"
+          # template: "@/contrib/sarif.tpl"
+          output: "trivy-results.sarif"
+
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+
+      - name: Upload Trivy scan results to GitHub Security tab
+        uses: github/codeql-action/upload-sarif@v1
+        with:
+          sarif_file: "trivy-results.sarif"          
 
       - name: Remove Local Images
         run: |
           docker rmi -f 6a7b4d || true #$(docker images -aq) 
 
-      - name: Upload Trivy scan results to GitHub Security tab
-        uses: github/codeql-action/upload-sarif@v2
-        with:
-          sarif_file: 'trivy-results.sarif'
