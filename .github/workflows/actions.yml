@@ -51,7 +51,7 @@ jobs:
           severity: 'HIGH,CRITICAL'
           # format: 'table'
           # exit-code: '1'
-          format: "template"
+          format: "sarif"
           # template: "@/contrib/sarif.tpl"
           output: "trivy-results.sarif"
 
@@ -60,7 +60,7 @@ jobs:
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
 
       - name: Upload Trivy scan results to GitHub Security tab
-        uses: github/codeql-action/upload-sarif@v1
+        uses: github/codeql-action/upload-sarif@v2
         with:
           sarif_file: "trivy-results.sarif"          
 
