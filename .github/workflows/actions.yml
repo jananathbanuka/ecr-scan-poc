@@ -101,7 +101,7 @@ jobs:
           trivy_version: "0.22.0" # https://github.com/aquasecurity/trivy/discussions/1515
           issue_title: ${{ github.event.head_commit.message }}
           issue_label: devops
-          vuln_type: os
+          # vuln_type: os
 
     # outputs:
     #   output1: ${{ steps.step1.outputs.html_url }}
