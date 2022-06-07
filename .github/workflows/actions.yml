@@ -74,11 +74,12 @@ jobs:
           sarif_file: "trivy-scan-results.sarif" 
 
       - name: Scan and create a GitHub Issue
-        uses: homoluctus/gitrivy@v1.0.0
+        uses: homoluctus/gitrivy@v2.0.0
         with: 
           token: ${{ secrets.ACCESS_TOKEN_GITHUB }}
           image: ${{ env.DOCKER_IMAGE_TO_SCAN }}
           severity: "HIGH,CRITICAL"
+          trivy_version: "v2.0.0"
           
 
       # - uses: shallwefootball/s3-upload-action@master
