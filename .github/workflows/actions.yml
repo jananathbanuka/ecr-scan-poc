@@ -97,6 +97,6 @@ jobs:
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           image: nginx
-          trivy_version: "0.22.0"
+          trivy_version: "0.23.0"
 
 
