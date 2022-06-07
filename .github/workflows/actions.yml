@@ -13,7 +13,7 @@ jobs:
     steps:
 
       - name: Checkout code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
       - name: get cwd
         run: |
@@ -51,36 +51,37 @@ jobs:
           ACCOUNT_ID=$(aws sts get-caller-identity | jq -r '.Account')
           echo "DOCKER_IMAGE_TO_SCAN=${ACCOUNT_ID}.dkr.ecr.eu-central-1.amazonaws.com/${IMAGE}:${IMAGE_ID}" >> $GITHUB_ENV
 
-      # - name: Trivy Scane - Unknown, Low and Medium Vulnerabilities
-      #   uses: aquasecurity/trivy-action@master
-      #   with:
-      #     image-ref: '${{ env.DOCKER_IMAGE_TO_SCAN }}'
-      #     severity: 'UNKNOWN,LOW,MEDIUM'
-      #     format: 'table'
-      #     # exit-code: '1'
-      #     # output: 'trivy-results.sarif'
-      #   env:
-      #     AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY }}
-      #     AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_KEY }}
+      - name: Trivy Scane - Unknown, Low and Medium Vulnerabilities
+        uses: aquasecurity/trivy-action@master
+        with:
+          image-ref: '${{ env.DOCKER_IMAGE_TO_SCAN }}'
+          severity: 'UNKNOWN,LOW,MEDIUM'
+          format: 'table'
+          # exit-code: '1'
+          # output: 'trivy-results.sarif'
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_KEY }}
 
-      # - name: Trivy Scane - High and Critical Vulnerabilities
-      #   uses: aquasecurity/trivy-action@master
-      #   with:
-      #     image-ref: '${{ env.DOCKER_IMAGE_TO_SCAN }}'
-      #     severity: 'HIGH,CRITICAL'
-      #     # format: 'table'
-      #     # exit-code: '1'
-      #     format: "sarif"
-      #     template: "@/contrib/sarif.tpl"
-      #     output: "trivy-scan-results.sarif"
-      #   env:
-      #     AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY }}
-      #     AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_KEY }}
+      - name: Trivy Scane - High and Critical Vulnerabilities
+        uses: aquasecurity/trivy-action@master
+        with:
+          image-ref: '${{ env.DOCKER_IMAGE_TO_SCAN }}'
+          severity: 'HIGH,CRITICAL'
+          # format: 'table'
+          # exit-code: '1'
+          format: "sarif"
+          template: "@/contrib/sarif.tpl"
+          output: "trivy-scan-results.sarif"
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_KEY }}
 
-      # - name: Upload Trivy scan results to GitHub Security tab
-      #   uses: github/codeql-action/upload-sarif@v2
-      #   with:
-      #     sarif_file: "trivy-scan-results.sarif" 
+      - name: Upload Trivy scan results to GitHub Security tab
+        uses: github/codeql-action/upload-sarif@v2
+        with:
+          sarif_file: "trivy-scan-results.sarif" 
+          category: my-analysis-tool
           
 
       # - uses: shallwefootball/s3-upload-action@master
