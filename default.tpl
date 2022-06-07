@@ -1,3 +1,10 @@
+<style>
+.severity {
+text-align: center;
+font-weight: bold;
+color: red;
+}
+</style>
 <h2>{{- escapeXML ( index . 0 ).Target }} - Trivy Report - {{ getCurrentTime }}</h2>
 <table>
 {{- range . }}
@@ -14,7 +21,7 @@
   <tr class="severity-{{ escapeXML .Vulnerability.Severity }}">
     <td class="pkg-name">{{ escapeXML .PkgName }}</td>
     <td>{{ escapeXML .VulnerabilityID }}</td>
-    <td class="severity">{{ escapeXML .Vulnerability.Severity }}</td>
+    <td class="severity severity">{{ escapeXML .Vulnerability.Severity }}</td>
     <td class="pkg-version">{{ escapeXML .InstalledVersion }}</td>
     <td>{{ escapeXML .FixedVersion }}</td>
     <!-- <td class="links" data-more-links="off">
