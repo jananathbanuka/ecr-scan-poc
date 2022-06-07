@@ -99,10 +99,12 @@ jobs:
           image: nginx
           severity: "CRITICAL"
           trivy_version: "0.22.0" # https://github.com/aquasecurity/trivy/discussions/1515
-          issue_title: "Test Heading: ${{ GITHUB_HEAD_REF }}"
+          issue_title: ${{ github.ref_name }}
+          issue_label: devops
+          vuln_type: os
 
-    outputs:
-      output1: ${{ steps.step1.outputs.html_url }}
-      output2: ${{ steps.step2.outputs.issue_number	 }}
+    # outputs:
+    #   output1: ${{ steps.step1.outputs.html_url }}
+    #   output2: ${{ steps.step2.outputs.issue_number	 }}
 
 
