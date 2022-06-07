@@ -98,7 +98,7 @@ jobs:
           token: ${{ secrets.GITHUB_TOKEN }}
           image: node:10
           severity: "HIGH,CRITICAL"
-          issue_title: "$GITHUB_HEAD_REF"
+          issue_title: $GITHUB_JOB
           trivy_version: "0.22.0" # https://github.com/aquasecurity/trivy/discussions/1515
 
 
