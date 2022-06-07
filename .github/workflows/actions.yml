@@ -90,15 +90,14 @@ jobs:
     name: Daily Vulnerability Scan
     runs-on: e-bot7
     steps:
-      - name: Pull docker busybox:unstable
-        run: docker pull busybox:unstable
+      - name: Pull docker nginx
+        run: docker pull nginx
 
       - uses: lazy-actions/gitrivy@v3
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
-          image: busybox:unstable
+          image: nginx
           severity: "HIGH,CRITICAL"
-          issue_title: "Test"
           trivy_version: "0.22.0" # https://github.com/aquasecurity/trivy/discussions/1515
 
 
