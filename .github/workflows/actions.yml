@@ -110,7 +110,7 @@ jobs:
           issue_title: "[Critical Vulnerability] - ${{ github.ref_name }} / ${{ github.event.head_commit.message }}"
           issue_label: devops
           template: "@/home/ubuntu/actions-runner/_work/ecr-scan-poc/ecr-scan-poc/default.tpl" 
-          ignore_unfixed: true
+          # ignore_unfixed: true
           # vuln_type: os
 
 
