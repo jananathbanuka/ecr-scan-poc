@@ -107,7 +107,7 @@ jobs:
           trivy_version: "0.22.0" # https://github.com/aquasecurity/trivy/discussions/1515
           issue_title: "${{ github.ref_name }} - ${{ github.event.head_commit.message }}"
           issue_label: devops
-          template: "@${GITHUB_WORKSPACE}/temp.tpl" 
+          template: "@/home/ubuntu/actions-runner/_work/ecr-scan-poc/ecr-scan-poc/temp.tpl" 
           # vuln_type: os
 
 
