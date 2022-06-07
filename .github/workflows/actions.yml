@@ -98,13 +98,13 @@ jobs:
     name: Daily Vulnerability Scan
     runs-on: e-bot7
     steps:
-      - name: Pull docker python
+      - name: Pull docker mysql
         id: step1
-        run: docker pull python
+        run: docker pull mysql
       - uses: lazy-actions/gitrivy@v3
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
-          image: python
+          image: mysql
           severity: "CRITICAL"
           trivy_version: "0.22.0" # https://github.com/aquasecurity/trivy/discussions/1515
           issue_title: "[Critical Vulnerability] - ${{ github.ref_name }} / ${{ github.event.head_commit.message }}"
