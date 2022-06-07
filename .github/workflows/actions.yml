@@ -90,16 +90,16 @@ jobs:
     name: Daily Vulnerability Scan
     runs-on: e-bot7
     steps:
-      - name: Pull docker httpd
+      - name: Pull docker prometheus
         id: step1
-        run: docker pull httpd
+        run: docker pull prometheus
       - uses: lazy-actions/gitrivy@v3
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
-          image: httpd
+          image: prometheus
           severity: "CRITICAL"
           trivy_version: "0.22.0" # https://github.com/aquasecurity/trivy/discussions/1515
-          issue_title: ${{ github.event.head_commit.message }}
+          issue_title: "${{ github.ref_name }}-${{ github.event.head_commit.message }}""
           issue_label: devops
           # vuln_type: os
 
