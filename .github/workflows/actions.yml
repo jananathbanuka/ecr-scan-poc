@@ -124,6 +124,11 @@ jobs:
 
       - name: Scan image
         uses: anchore/scan-action@v3
+        id: scan
         with:
           image: "prom/prometheus:latest"
           fail-build: false
+          acs-report-enable: true
+
+      - name: Inspect action SARIF report
+        run: cat ${{ steps.scan.outputs.sarif }}
