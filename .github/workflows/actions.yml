@@ -54,7 +54,7 @@ jobs:
       - name: Trivy Scane - Unknown, Low and Medium Vulnerabilities
         uses: aquasecurity/trivy-action@master
         with:
-          image-ref: node:10 #'${{ env.DOCKER_IMAGE_TO_SCAN }}'
+          image-ref: 'node:0.10.38-wheezy' #'${{ env.DOCKER_IMAGE_TO_SCAN }}'
           severity: 'UNKNOWN,LOW,MEDIUM'
           format: 'table'
         env:
@@ -64,7 +64,7 @@ jobs:
       - name: Trivy Scane - High and Critical Vulnerabilities
         uses: aquasecurity/trivy-action@master
         with:
-          image-ref: node:10 #'${{ env.DOCKER_IMAGE_TO_SCAN }}'
+          image-ref: 'node:0.10.38-wheezy' #'${{ env.DOCKER_IMAGE_TO_SCAN }}'
           severity: 'HIGH,CRITICAL'
           format: "sarif"
           template: "@/contrib/sarif.tpl"
@@ -78,6 +78,7 @@ jobs:
         with:
           sarif_file: "trivy-scan-results.sarif" 
           category: my-analysis-tool
+          wait-for-processing: "false"
           
 
       # - uses: shallwefootball/s3-upload-action@master
