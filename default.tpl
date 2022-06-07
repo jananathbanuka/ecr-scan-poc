@@ -1,10 +1,12 @@
-<style>
-.severity {
-text-align: center;
-font-weight: bold;
-color: red;
-}
-</style>
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+
+{{- if . }}
+  </head>
+
+<body>
 <h2>{{- escapeXML ( index . 0 ).Target }} - Trivy Report - {{ getCurrentTime }}</h2>
 <table>
 {{- range . }}
@@ -33,3 +35,11 @@ color: red;
   {{- end }}
 {{- end }}
 </table>
+
+{{- else }}
+  </head>
+  <body>
+    <h1>Trivy Returned Empty Report</h1>
+{{- end }}
+  </body>
+</html>
