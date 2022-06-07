@@ -8,7 +8,7 @@
     <th>Severity</th>
     <th>Installed Version</th>
     <th>Fixed Version</th>
-    <!-- <th>Links - banuka</th> -->
+    <!-- <th>Links</th> -->
   </tr>
     {{- range .Vulnerabilities }}
   <tr class="severity-{{ escapeXML .Vulnerability.Severity }}">
