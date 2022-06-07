@@ -90,13 +90,13 @@ jobs:
     name: Daily Vulnerability Scan
     runs-on: e-bot7
     steps:
-      - name: Pull docker nginx
-        run: docker pull httpd
+      - name: Pull docker ubuntu
+        run: docker pull ubuntu
 
       - uses: lazy-actions/gitrivy@v3
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
-          image: httpd
+          image: ubuntu
           severity: "HIGH,CRITICAL"
           issue_title: "$GITHUB_HEAD_REF"
           trivy_version: "0.22.0" # https://github.com/aquasecurity/trivy/discussions/1515
