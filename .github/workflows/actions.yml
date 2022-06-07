@@ -78,6 +78,7 @@ jobs:
         with:
           token: ${{ secrets.ACCESS_TOKEN_GITHUB }}
           image: ${{ env.DOCKER_IMAGE_TO_SCAN }}
+          severity: "HIGH,CRITICAL"
           
 
       # - uses: shallwefootball/s3-upload-action@master
