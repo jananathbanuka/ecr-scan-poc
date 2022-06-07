@@ -72,14 +72,6 @@ jobs:
         uses: github/codeql-action/upload-sarif@v2
         with:
           sarif_file: "trivy-scan-results.sarif" 
-
-      - name: Scan and create a GitHub Issue
-        uses: homoluctus/gitrivy@v2.0.0
-        with: 
-          token: ${{ secrets.ACCESS_TOKEN_GITHUB }}
-          image: ${{ env.DOCKER_IMAGE_TO_SCAN }}
-          severity: "HIGH,CRITICAL"
-          trivy_version: "v2.0.0"
           
 
       # - uses: shallwefootball/s3-upload-action@master
@@ -92,5 +84,18 @@ jobs:
       - name: Remove Local Images
         run: |
           docker rmi -f 6a7b4d || true #$(docker images -aq) 
+
+
+  scan:
+    name: Daily Vulnerability Scan
+    runs-on: ubuntu-latest
+    steps:
+      - name: Pull docker nginx
+        run: docker pull nginx
+
+      - uses: lazy-actions/gitrivy@v3
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          image: nginx
 
 
