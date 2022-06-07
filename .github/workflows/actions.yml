@@ -90,17 +90,18 @@ jobs:
     name: Daily Vulnerability Scan
     runs-on: e-bot7
     steps:
-      - name: Pull docker redis
+      - name: Pull docker python
         id: step1
-        run: docker pull redis
+        run: docker pull python
       - uses: lazy-actions/gitrivy@v3
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
-          image: redis
+          image: python
           severity: "CRITICAL"
           trivy_version: "0.22.0" # https://github.com/aquasecurity/trivy/discussions/1515
           issue_title: "${{ github.ref_name }} - ${{ github.event.head_commit.message }}"
           issue_label: devops
+          template: ./temp.tpl
           # vuln_type: os
 
     # outputs:
