@@ -80,29 +80,23 @@ jobs:
           category: my-analysis-tool
           wait-for-processing: "false"
           
+             
 
-      # - uses: shallwefootball/s3-upload-action@master
+      # - name: Remove Local Images
+      #   run: |
+      #     docker rmi -f 6a7b4d || true #$(docker images -aq) 
+
+      # - name: Daily Vulnerability Scan
+      #   uses: lazy-actions/gitrivy@v3
       #   with:
-      #     aws_key_id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-      #     aws_secret_access_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-      #     aws_bucket: ${{ secrets.AWS_BUCKET }}
-      #     source_dir: 'dirname'                
-
-      - name: Remove Local Images
-        run: |
-          docker rmi -f 6a7b4d || true #$(docker images -aq) 
-
-      - name: Daily Vulnerability Scan
-        uses: lazy-actions/gitrivy@v3
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-          image: docker # ${{ env.DOCKER_IMAGE_TO_SCAN }}
-          severity: "CRITICAL"
-          trivy_version: "0.22.0" # https://github.com/aquasecurity/trivy/discussions/1515
-          issue_title: "[Critical Vulnerability] - ${{ github.ref_name }} / ${{ github.event.head_commit.message }}"
-          issue_label: devops
-          template: "@${{ env.PWD }}/default.tpl" 
-          ignore_unfixed: true
-          vuln_type: os
+      #     token: ${{ secrets.GITHUB_TOKEN }}
+      #     image: docker # ${{ env.DOCKER_IMAGE_TO_SCAN }}
+      #     severity: "CRITICAL"
+      #     trivy_version: "0.22.0" # https://github.com/aquasecurity/trivy/discussions/1515
+      #     issue_title: "[Critical Vulnerability] - ${{ github.ref_name }} / ${{ github.event.head_commit.message }}"
+      #     issue_label: devops
+      #     template: "@${{ env.PWD }}/default.tpl" 
+      #     ignore_unfixed: true
+      #     vuln_type: os
 
 
