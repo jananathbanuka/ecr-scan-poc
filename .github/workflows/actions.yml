@@ -94,6 +94,7 @@ jobs:
 
 
   scan:
+    needs: VulnerabilityScanner
     name: Daily Vulnerability Scan
     runs-on: e-bot7
     steps:
