@@ -52,7 +52,7 @@ jobs:
           # output: 'trivy-results.sarif'
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_KEY }}
 
       - name: Trivy Scane - High and Critical Vulnerabilities
         uses: aquasecurity/trivy-action@master
@@ -64,9 +64,8 @@ jobs:
           format: "sarif"
           template: "@/contrib/sarif.tpl"
           output: "trivy-scan-results.sarif"
-
         env:
-          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_KEY }}
 
       - name: Upload Trivy scan results to GitHub Security tab
