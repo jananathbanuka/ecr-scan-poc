@@ -105,6 +105,6 @@ jobs:
           issue_label: devops
           template: "@${{ env.PWD }}/default.tpl" 
           ignore_unfixed: true
-          # vuln_type: os
+          vuln_type: os
 
 
