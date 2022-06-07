@@ -6,14 +6,14 @@ on: [push]
 #   IMAGE_ID: "3"
 
 jobs:
-  VulnerabilityScanner:
-    runs-on: e-bot7
-    steps:
+  # VulnerabilityScanner:
+  #   runs-on: e-bot7
+  #   steps:
 
-      - name: get cwd
-        run: |
-          pwd
-          ls
+  #     - name: get cwd
+  #       run: |
+  #         pwd
+  #         ls
 
       # - name: Checkout code
       #   uses: actions/checkout@v2
