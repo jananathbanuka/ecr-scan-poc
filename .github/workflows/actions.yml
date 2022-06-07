@@ -6,11 +6,17 @@ on: [push]
 #   IMAGE_ID: "3"
 
 jobs:
-  # VulnerabilityScanner:
-  #   runs-on: e-bot7
-  #   steps:
-  #     - name: Checkout code
-  #       uses: actions/checkout@v2
+  VulnerabilityScanner:
+    runs-on: e-bot7
+    steps:
+
+      - name: get cwd
+        run: |
+          pwd
+          ls
+
+      # - name: Checkout code
+      #   uses: actions/checkout@v2
 
   #     - name: Configure AWS credentials
   #       uses: aws-actions/configure-aws-credentials@v1
@@ -103,9 +109,5 @@ jobs:
           issue_label: devops
           template: "@${GITHUB_WORKSPACE}/temp.tpl" 
           # vuln_type: os
-
-    # outputs:
-    #   output1: ${{ steps.step1.outputs.html_url }}
-    #   output2: ${{ steps.step2.outputs.issue_number	 }}
 
 
