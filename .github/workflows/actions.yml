@@ -98,7 +98,7 @@ jobs:
         uses: lazy-actions/gitrivy@v3
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
-          image: mongo # ${{ env.DOCKER_IMAGE_TO_SCAN }}
+          image: docker # ${{ env.DOCKER_IMAGE_TO_SCAN }}
           severity: "CRITICAL"
           trivy_version: "0.22.0" # https://github.com/aquasecurity/trivy/discussions/1515
           issue_title: "[Critical Vulnerability] - ${{ github.ref_name }} / ${{ github.event.head_commit.message }}"
