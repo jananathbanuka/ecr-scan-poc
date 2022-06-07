@@ -1,46 +1,46 @@
 name: GitHub Actions Demo
 on: [push]
 
-env:
-  IMAGE: "ecr-scan-poc"
-  IMAGE_ID: "3"
+# env:
+#   IMAGE: "ecr-scan-poc"
+#   IMAGE_ID: "3"
 
 jobs:
-  VulnerabilityScanner:
-    runs-on: e-bot7
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
+  # VulnerabilityScanner:
+  #   runs-on: e-bot7
+  #   steps:
+  #     - name: Checkout code
+  #       uses: actions/checkout@v2
 
-      - name: Configure AWS credentials
-        uses: aws-actions/configure-aws-credentials@v1
-        with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_KEY }}
-          aws-region: eu-central-1
+  #     - name: Configure AWS credentials
+  #       uses: aws-actions/configure-aws-credentials@v1
+  #       with:
+  #         aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY }}
+  #         aws-secret-access-key: ${{ secrets.AWS_SECRET_KEY }}
+  #         aws-region: eu-central-1
 
-      - name: Install prerequisite tools
-        id: install-tools
-        run: |
-          sudo apt install jq unzip -y 
+  #     - name: Install prerequisite tools
+  #       id: install-tools
+  #       run: |
+  #         sudo apt install jq unzip -y 
 
-          curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
-          unzip awscliv2.zip
-          sudo ./aws/install || echo "already exists"
+  #         curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
+  #         unzip awscliv2.zip
+  #         sudo ./aws/install || echo "already exists"
 
-      - name: Login to Amazon ECR
-        id: login-ecr
-        uses: aws-actions/amazon-ecr-login@v1  
+  #     - name: Login to Amazon ECR
+  #       id: login-ecr
+  #       uses: aws-actions/amazon-ecr-login@v1  
 
-      - name: List Images
-        run: |
-          # aws ecr describe-repositories
-          aws ecr list-images --repository-name ecr-scan-poc
+  #     - name: List Images
+  #       run: |
+  #         # aws ecr describe-repositories
+  #         aws ecr list-images --repository-name ecr-scan-poc
 
-      - name: Set Docker Image Env
-        run: |
-          ACCOUNT_ID=$(aws sts get-caller-identity | jq -r '.Account')
-          echo "DOCKER_IMAGE_TO_SCAN=${ACCOUNT_ID}.dkr.ecr.eu-central-1.amazonaws.com/${IMAGE}:${IMAGE_ID}" >> $GITHUB_ENV
+  #     - name: Set Docker Image Env
+  #       run: |
+  #         ACCOUNT_ID=$(aws sts get-caller-identity | jq -r '.Account')
+  #         echo "DOCKER_IMAGE_TO_SCAN=${ACCOUNT_ID}.dkr.ecr.eu-central-1.amazonaws.com/${IMAGE}:${IMAGE_ID}" >> $GITHUB_ENV
 
       # - name: Trivy Scane - Unknown, Low and Medium Vulnerabilities
       #   uses: aquasecurity/trivy-action@master
@@ -81,9 +81,9 @@ jobs:
       #     aws_bucket: ${{ secrets.AWS_BUCKET }}
       #     source_dir: 'dirname'                
 
-      - name: Remove Local Images
-        run: |
-          docker rmi -f 6a7b4d || true #$(docker images -aq) 
+      # - name: Remove Local Images
+      #   run: |
+      #     docker rmi -f 6a7b4d || true #$(docker images -aq) 
 
 
   scan:
@@ -97,6 +97,6 @@ jobs:
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           image: nginx
-          version: latest
+          trivy_version: latest
 
 
