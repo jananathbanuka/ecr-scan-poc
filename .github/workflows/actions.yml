@@ -63,7 +63,14 @@ jobs:
       - name: Upload Trivy scan results to GitHub Security tab
         uses: github/codeql-action/upload-sarif@v2
         with:
-          sarif_file: "trivy-scan-results.sarif"    
+          sarif_file: "trivy-scan-results.sarif" 
+
+      - name: Scan and create a GitHub Issue
+        uses: lazy-actions/gitrivy@v3
+        with:
+          token: ${{ secrets.ACCESS_TOKEN_GITHUB }}
+          image: ${{ env.DOCKER_IMAGE_TO_SCAN }}
+          
 
       # - uses: shallwefootball/s3-upload-action@master
       #   with:
