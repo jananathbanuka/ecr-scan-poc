@@ -1,9 +1,11 @@
 name: GitHub Actions Demo
 on: [push]
 
-# env:
-#   IMAGE: "ecr-scan-poc"
-#   IMAGE_ID: "3"
+env:
+  IMAGE: "ecr-scan-poc"
+  IMAGE_ID: "3"
+  PWD: ${GITHUB_WORKSPACE}
+
 
 jobs:
   VulnerabilityScanner:
