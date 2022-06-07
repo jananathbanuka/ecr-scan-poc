@@ -9,75 +9,74 @@ env:
 
 
 jobs:
-  # VulnerabilityScanner:
-  #   runs-on: e-bot7
-  #   steps:
+  VulnerabilityScanner:
+    runs-on: e-bot7
+    steps:
 
-  #     - name: Checkout code
-  #       uses: actions/checkout@v3
+      - name: Checkout code
+        uses: actions/checkout@v3
 
-  #     - name: get cwd
-  #       run: |
-  #         pwd
-  #         ls
-  #         cat README.md        
+      - name: get cwd
+        run: |
+          pwd
+          ls
+          cat README.md        
 
-  #     - name: Configure AWS credentials
-  #       uses: aws-actions/configure-aws-credentials@v1
-  #       with:
-  #         aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY }}
-  #         aws-secret-access-key: ${{ secrets.AWS_SECRET_KEY }}
-  #         aws-region: eu-central-1
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_KEY }}
+          aws-region: eu-central-1
 
-  #     - name: Install prerequisite tools
-  #       id: install-tools
-  #       run: |
-  #         sudo apt install jq unzip -y 
-
-  #         curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
-  #         unzip awscliv2.zip
-  #         sudo ./aws/install || echo "already exists"
-
-      # - name: Login to Amazon ECR
-      #   id: login-ecr
-      #   uses: aws-actions/amazon-ecr-login@v1  
-
-  #     - name: List Images
-  #       run: |
-  #         # aws ecr describe-repositories
-  #         aws ecr list-images --repository-name ecr-scan-poc
-
-      # - name: Set Docker Image Env
+      # - name: Install prerequisite tools
+      #   id: install-tools
       #   run: |
-      #     ACCOUNT_ID=$(aws sts get-caller-identity | jq -r '.Account')
-      #     echo "DOCKER_IMAGE_TO_SCAN=${ACCOUNT_ID}.dkr.ecr.eu-central-1.amazonaws.com/${IMAGE}:${IMAGE_ID}" >> $GITHUB_ENV
+      #     sudo apt install jq unzip -y 
 
+      #     curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
+      #     unzip awscliv2.zip
+      #     sudo ./aws/install || echo "already exists"
 
-      # - name: pull images
+      - name: Login to Amazon ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v1  
+
+      # - name: List Images
       #   run: |
-      #     docker pull ${{ env.TEST_IMAGE }}
+      #     # aws ecr describe-repositories
+      #     aws ecr list-images --repository-name ecr-scan-poc
 
-      # - name: Trivy Scane - Unknown, Low and Medium Vulnerabilities
-      #   uses: aquasecurity/trivy-action@master
-      #   with:
-      #     image-ref: '${{ env.TEST_IMAGE }}' #'${{ env.DOCKER_IMAGE_TO_SCAN }}'
-      #     severity: 'UNKNOWN,LOW,MEDIUM'
-      #     format: 'table'
-      #   env:
-      #     AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY }}
-      #     AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_KEY }}
+      - name: Set Docker Image Env
+        run: |
+          ACCOUNT_ID=$(aws sts get-caller-identity | jq -r '.Account')
+          echo "DOCKER_IMAGE_TO_SCAN=${ACCOUNT_ID}.dkr.ecr.eu-central-1.amazonaws.com/${IMAGE}:${IMAGE_ID}" >> $GITHUB_ENV
 
-      # - name: Trivy Scane - High and Critical Vulnerabilities
-      #   uses: aquasecurity/trivy-action@master
-      #   with:
-      #     image-ref: '${{ env.TEST_IMAGE }}' #'${{ env.DOCKER_IMAGE_TO_SCAN }}'
-      #     severity: 'HIGH,CRITICAL'
-      #     format: "sarif"
-      #     template: "@/contrib/sarif.tpl"
-      #     output: "trivy-scan-results.sarif"
-      #   env:
-      #     AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY }}
-      #     AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_KEY }}
+      - name: pull images
+        run: |
+          docker pull ${{ env.TEST_IMAGE }}
+
+      - name: Trivy Scane - Unknown, Low and Medium Vulnerabilities
+        uses: aquasecurity/trivy-action@master
+        with:
+          image-ref: '${{ env.TEST_IMAGE }}' #'${{ env.DOCKER_IMAGE_TO_SCAN }}'
+          severity: 'UNKNOWN,LOW,MEDIUM'
+          format: 'table'
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_KEY }}
+
+      - name: Trivy Scane - High and Critical Vulnerabilities
+        uses: aquasecurity/trivy-action@master
+        with:
+          image-ref: '${{ env.TEST_IMAGE }}' #'${{ env.DOCKER_IMAGE_TO_SCAN }}'
+          severity: 'HIGH,CRITICAL'
+          format: "sarif"
+          template: "@/contrib/sarif.tpl"
+          output: "trivy-scan-results.sarif"
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_KEY }}
 
       # - name: Upload Trivy scan results to GitHub Security tab
       #   uses: github/codeql-action/upload-sarif@v2
@@ -86,49 +85,36 @@ jobs:
       #     category: my-analysis-tool
       #     wait-for-processing: "false"
           
-             
-
       # - name: Remove Local Images
       #   run: |
       #     docker rmi -f 6a7b4d || true #$(docker images -aq) 
 
-      # - name: Daily Vulnerability Scan
-      #   uses: lazy-actions/gitrivy@v3
-      #   with:
-      #     token: ${{ secrets.GITHUB_TOKEN }}
-      #     image: docker # ${{ env.DOCKER_IMAGE_TO_SCAN }}
-      #     severity: "CRITICAL"
-      #     trivy_version: "0.22.0" # https://github.com/aquasecurity/trivy/discussions/1515
-      #     issue_title: "[Critical Vulnerability] - ${{ github.ref_name }} / ${{ github.event.head_commit.message }}"
-      #     issue_label: devops
-      #     template: "@${{ env.PWD }}/default.tpl" 
-      #     ignore_unfixed: true
-      #     vuln_type: os
-
-
-  Anchore:
-
-    runs-on: e-bot7
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v3    
-      # - name: Set up Docker Buildx
-      #   uses: docker/setup-buildx-action@v1
-
-      # - name: build local container
-      #   uses: docker/build-push-action@v2
-      #   with:
-      #     tags: localbuild/testimage:latest
-      #     push: false
-      #     load: true
-
-      - name: Scan image
-        uses: anchore/scan-action@v3
-        id: scan
+      - name: Daily Vulnerability Scan
+        uses: lazy-actions/gitrivy@v3
         with:
-          image: "prom/prometheus:latest"
-          fail-build: false
-          acs-report-enable: true
+          token: ${{ secrets.GITHUB_TOKEN }}
+          image: ${{ env.TEST_IMAGE }}
+          severity: "CRITICAL"
+          trivy_version: "0.22.0" # https://github.com/aquasecurity/trivy/discussions/1515
+          issue_title: "[Critical Vulnerability] - ${{ github.ref_name }} / ${{ github.event.head_commit.message }}"
+          issue_label: devops
+          template: "@${{ env.PWD }}/default.tpl" 
+          # ignore_unfixed: true
+          # vuln_type: os
 
-      - name: Inspect action SARIF report
-        run: cat ${{ steps.scan.outputs.sarif }}
+
+  # Anchore:
+  #   runs-on: e-bot7
+  #   steps:
+  #     - name: Checkout code
+  #       uses: actions/checkout@v3    
+  #     - name: Scan image
+  #       uses: anchore/scan-action@v3
+  #       id: scan
+  #       with:
+  #         image: "prom/prometheus:latest"
+  #         fail-build: false
+  #         acs-report-enable: true
+
+  #     - name: Inspect action SARIF report
+  #       run: cat ${{ steps.scan.outputs.sarif }}
