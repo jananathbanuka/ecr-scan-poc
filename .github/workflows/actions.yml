@@ -91,12 +91,14 @@ jobs:
     runs-on: e-bot7
     steps:
       - name: Pull docker nginx
-        run: docker pull nginx
+        run: docker pull httpd
 
       - uses: lazy-actions/gitrivy@v3
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
-          image: nginx
+          image: httpd
+          severity: "HIGH,CRITICAL"
+
           trivy_version: "0.22.0" # https://github.com/aquasecurity/trivy/discussions/1515
 
 
