@@ -10,14 +10,14 @@ jobs:
     runs-on: e-bot7
     steps:
 
+      - name: Checkout code
+        uses: actions/checkout@v2
+
       - name: get cwd
         run: |
           pwd
           ls
-          cat README.md
-
-      # - name: Checkout code
-      #   uses: actions/checkout@v2
+          cat README.md        
 
   #     - name: Configure AWS credentials
   #       uses: aws-actions/configure-aws-credentials@v1
