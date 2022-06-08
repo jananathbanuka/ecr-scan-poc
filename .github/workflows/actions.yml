@@ -36,8 +36,8 @@ jobs:
         uses: tzkhan/pr-update-action@v2
         with:
           repo-token: "${{ secrets.GITHUB_TOKEN }}"
-          base-branch-regex: '[a-z\d-_.\\/]+'
-          head-branch-regex: '${{ env.THIS_BRANCH }}-\d+'
+          # base-branch-regex: '[a-z\d-_.\\/]+'
+          # head-branch-regex: '${{ env.THIS_BRANCH }}-\d+'
           title-template: '[%headbranch%] '
           body-template: |
             Merging into '%basebranch%'
