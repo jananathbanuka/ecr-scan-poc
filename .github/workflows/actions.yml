@@ -11,7 +11,7 @@ env:
   PWD: ${{ github.workspace }}
   TEST_IMAGE: httpd
   PR_NUMBER: ${{ github.event.number }}
-  THIS_BRANCH: ${{ github.ref_name }}
+  THIS_BRANCH: ${{ github.head_ref }}
 
 jobs:
   trivy:
