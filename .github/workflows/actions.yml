@@ -15,10 +15,10 @@ env:
 jobs:
   trivy:
     runs-on: ubuntu-latest
-    container: aquasec/trivy
+    container: docker
     steps:
       - run: |
-          image python:3.4-alpine
+          docker run aquasec/trivy image python:3.4-alpine
       
 
 
