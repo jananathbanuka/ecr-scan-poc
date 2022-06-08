@@ -15,7 +15,7 @@ env:
 jobs:
   trivy:
     runs-on: ubuntu-latest
-    container: docker
+    container: docker:dind
     steps:
       - run: |
           docker run aquasec/trivy image python:3.4-alpine
