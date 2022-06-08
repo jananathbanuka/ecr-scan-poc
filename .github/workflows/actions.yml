@@ -2,13 +2,14 @@ name: GitHub Actions Demo
 # on: [push]
 on:
   pull_request:
-    types: [opened, reopened]
+    types: [opened, reopened, synchronize, edited]
+
 
 env:
   IMAGE: "ecr-scan-poc"
   IMAGE_ID: "3"
   PWD: ${{ github.workspace }}
-  TEST_IMAGE: node:0.10.38-wheezy
+  TEST_IMAGE: httpd
 
 
 jobs:
@@ -86,7 +87,7 @@ jobs:
         with:
           sarif_file: "trivy-scan-results.sarif" 
           # category: my-analysis-tool
-          wait-for-processing: "false"
+          # wait-for-processing: "false"
           
       # - name: Remove Local Images
       #   run: |
