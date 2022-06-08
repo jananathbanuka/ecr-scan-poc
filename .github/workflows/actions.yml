@@ -10,6 +10,7 @@ env:
   IMAGE_ID: "3"
   PWD: ${{ github.workspace }}
   TEST_IMAGE: httpd
+  PR_NUMBER: ${{ github.event.number }}
 
 
 jobs:
@@ -28,8 +29,7 @@ jobs:
 
       - name: get cwd
         run: |
-          pwd
-          ls
+          echo "PR number is: ${{ env.PR_NUMBER }}" >> result.txt  
           cat result.txt         
         
 
