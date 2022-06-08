@@ -37,7 +37,7 @@ jobs:
         with:
           repo-token: "${{ secrets.GITHUB_TOKEN }}"
           base-branch-regex: '[a-z\d-_.\\/]+'
-          head-branch-regex: 'foo-\d+'
+          head-branch-regex: '${{ env.THIS_BRANCH }}-\d+'
           title-template: '[%headbranch%] '
           body-template: |
             Merging into '%basebranch%'
