@@ -36,7 +36,7 @@ jobs:
         uses: kt3k/update-pr-description@v1.0.1
         with:
           pr_body: "**some description**"
-          destination_branch: ${{ env.THIS_BRANCH }}
+          destination_branch: main #${{ env.THIS_BRANCH }}
           github_token: ${{ secrets.GITHUB_TOKEN }}          
         
 
