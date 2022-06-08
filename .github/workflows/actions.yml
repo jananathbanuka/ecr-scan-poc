@@ -87,7 +87,7 @@ jobs:
         with:
           sarif_file: "trivy-scan-results.sarif" 
           # category: my-analysis-tool
-          wait-for-processing: "false"
+          # wait-for-processing: "false"
           
       # - name: Remove Local Images
       #   run: |
