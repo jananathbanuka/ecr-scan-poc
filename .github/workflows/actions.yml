@@ -9,7 +9,7 @@ env:
   IMAGE: "ecr-scan-poc"
   IMAGE_ID: "3"
   PWD: ${{ github.workspace }}
-  TEST_IMAGE: node:0.10.38-wheezy
+  TEST_IMAGE: httpd
 
 
 jobs:
