@@ -32,11 +32,16 @@ jobs:
           echo "PR number is: ${{ env.PR_NUMBER }}" >> result.txt  
           cat result.txt     
 
+      - name: pull-request
+        uses: repo-sync/pull-request@v2
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+
       - name: update-pull-request
         uses: kt3k/update-pr-description@v1.0.1
         with:
-          pr_body: "**some description**"
-          destination_branch: main #${{ env.THIS_BRANCH }}
+          pr_body: "hi there"
+          destination_branch: ${{ env.THIS_BRANCH }}
           github_token: ${{ secrets.GITHUB_TOKEN }}          
         
 
