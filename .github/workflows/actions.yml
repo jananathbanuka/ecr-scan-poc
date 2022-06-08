@@ -18,7 +18,8 @@ jobs:
     container: docker:dind
     steps:
       - run: |
-          docker run aquasec/trivy image -f json -o results.json python:3.4-alpine
+          $docker run aquasec/trivy image -f json -o results.json python:3.4-alpine
+          docker run aquasec/trivy image -f json python:3.4-alpine
           #result=$()
           #echo $result > result.txt
           #count=$(sed -n -e '/^Total:/p' result.txt)
