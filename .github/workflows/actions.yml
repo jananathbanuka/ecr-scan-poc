@@ -18,7 +18,8 @@ jobs:
     container: docker:dind
     steps:
       - run: |
-          docker run aquasec/trivy image python:3.4-alpine | grep -i "Total:" -A1 -B2
+          docker run aquasec/trivy image python:3.4-alpine | grep -i "Total:" -A1 -B2 > result.txt
+          cat result.txt
         
 
       
