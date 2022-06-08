@@ -30,7 +30,8 @@ jobs:
       - name: get cwd
         run: |
           echo "PR number is: ${{ env.PR_NUMBER }}" >> result.txt  
-          cat result.txt     
+          FILE_CONTENT=$(cat result.txt)    
+          echo "SCAN_SUMMARY=${FILE_CONTENT}" >> $GITHUB_ENV
 
       - name: UPDATE PR
         uses: tzkhan/pr-update-action@v2
@@ -38,10 +39,11 @@ jobs:
           repo-token: "${{ secrets.GITHUB_TOKEN }}"
           base-branch-regex: '[a-z\d-_.\\/]+'
           # head-branch-regex: '${{ env.THIS_BRANCH }}-\d+'
-          title-template: '[%headbranch%] '
+          # title-template: '[%headbranch%] '
           body-template: |
             Merging into '%basebranch%'
             [Link to %headbranch%](https://url/to/browse/ticket/%headbranch%)
+            ${{ env.SCAN_SUMMARY }}
           body-update-action: 'suffix'
           body-uppercase-base-match: false
 
