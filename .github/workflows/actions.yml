@@ -53,13 +53,13 @@ jobs:
           IFS=: read critical1 critical2 <<< $var1
           IFS=: read high1 high2 <<< $var2
 
-          echo -e "\n| Severity  | Number of Vulnerabilities|\n| ------------- | ------------- |\n| $critical1    | $critical2  |\n| $high1        | $high2  |\n" >> scan_results
+          echo -e "\n---| Severity  | Number of Vulnerabilities|\n| ------------- | ------------- |\n| $critical1    | $critical2  |\n| $high1        | $high2  |\n" >> pr_body
           
 
-          echo  "[View the Full Report](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})" >> scan_results
+          echo  "[View the Full Report](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})" >> pr_body
           
           echo 'SUMMARY_OF_THE_SCAN<<EOF' >> $GITHUB_ENV
-          cat scan_results >> $GITHUB_ENV
+          cat pr_body >> $GITHUB_ENV
           echo 'EOF' >> $GITHUB_ENV
 
           
