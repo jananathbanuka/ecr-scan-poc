@@ -27,7 +27,7 @@ jobs:
           wget -q --show-progress https://github.com/aquasecurity/trivy/releases/download/v0.18.3/trivy_0.18.3_Linux-64bit.deb
           sudo dpkg -i trivy_0.18.3_Linux-64bit.deb
 
-          trivy image python:3.4 | grep -i "Total:" -A1 -B2 > scan_results
+          trivy image docker:dind | grep -i "Total:" -A1 -B2 > scan_results
           echo 'SUMMARY_OF_THE_SCAN<<EOF' >> $GITHUB_ENV
           cat scan_results >> $GITHUB_ENV
           echo 'EOF' >> $GITHUB_ENV
