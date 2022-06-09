@@ -133,7 +133,7 @@ jobs:
       #     SLACK_LINK_NAMES: true
       #     SLACK_ICON_EMOJI: ":bangbang:"
 
-      - name: Send custom JSON data to Slack workflow
+      - name: Send Slack Notification
         id: slack
         uses: slackapi/slack-github-action@v1.19.0
         if: (${{ env.CRITICAL_VULNERABILITIES_FOUND }} == 'true') || (${{ env.HIGH_VULNERABILITIES_FOUND }} == 'true')
@@ -179,7 +179,7 @@ jobs:
                         },
                         {
                           "type": "mrkdwn",
-                          "text": "`Critical`",       
+                          "text": "`Critical`"
                         },
                         {
                           "type": "mrkdwn",
@@ -187,7 +187,7 @@ jobs:
                         },
                         {
                           "type": "mrkdwn",
-                          "text": "`High`",                 
+                          "text": "`High`"
                         },
                         {
                           "type": "mrkdwn",
@@ -209,14 +209,14 @@ jobs:
                           "emoji": true
                         },
                         "value": "report",
-                        "url": "${{ env.GITHUB_ACTION_URL}}",
+                        "url": "${{ env.GITHUB_ACTION_URL }}",
                         "action_id": "button-action"
                       }
                     }
                   ]
                 }
               ]
-            }                               
+            }                              
         env:
           SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK }}
           SLACK_WEBHOOK_TYPE: INCOMING_WEBHOOK
