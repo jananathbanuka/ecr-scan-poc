@@ -28,7 +28,7 @@ jobs:
           sudo dpkg -i trivy_0.18.3_Linux-64bit.deb
 
           trivy image python:3.4-alpine | grep -i "Total:" -A1 -B2 > scan_results
-          GET_RESULT=$(CAT scan_results)
+          GET_RESULT=$(cat scan_results)
           echo "SUMMARY_OF_THE_SCAN=$GET_RESULT" >> $GITHUB_ENV
 
           
