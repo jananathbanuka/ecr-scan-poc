@@ -183,7 +183,7 @@ jobs:
                         },
                         {
                           "type": "mrkdwn",
-                          "text": "`Critical`"
+                          "text": "Critical"
                         },
                         {
                           "type": "mrkdwn",
@@ -191,7 +191,7 @@ jobs:
                         },
                         {
                           "type": "mrkdwn",
-                          "text": "`High`"
+                          "text": "High"
                         },
                         {
                           "type": "mrkdwn",
