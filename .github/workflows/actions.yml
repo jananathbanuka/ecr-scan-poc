@@ -205,7 +205,7 @@ jobs:
                         "type": "button",
                         "text": {
                           "type": "plain_text",
-                          "text": "Report",
+                          "text": "View Report",
                           "emoji": true
                         },
                         "value": "report",
