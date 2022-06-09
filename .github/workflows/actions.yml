@@ -45,7 +45,7 @@ jobs:
           wget -q --show-progress https://github.com/aquasecurity/trivy/releases/download/v0.18.3/trivy_0.18.3_Linux-64bit.deb
           sudo dpkg -i trivy_0.18.3_Linux-64bit.deb
 
-          trivy image --format template --template '{{- $critical := 0 }}{{- $high := 0 }}{{- range . }}{{- range .Vulnerabilities }}{{- if  eq .Severity "CRITICAL" }}{{- $critical = add $critical 1 }}{{- end }}{{- if  eq .Severity "HIGH" }}{{- $high = add $high 1 }}{{- end }}{{- end }}{{- end }}Summary:\nCritical: {{ $critical }}, High: {{ $high }}' ${{ env.DOCKER_IMAGE_TO_SCAN }} > scan_results #| grep -i "Total:" -A1 -B2 >
+          trivy image --format template --template '{{- $critical := 0 }}{{- $high := 0 }}{{- range . }}{{- range .Vulnerabilities }}{{- if  eq .Severity "CRITICAL" }}{{- $critical = add $critical 1 }}{{- end }}{{- if  eq .Severity "HIGH" }}{{- $high = add $high 1 }}{{- end }}{{- end }}{{- end }}Critical: {{ $critical }}, High: {{ $high }}' ${{ env.DOCKER_IMAGE_TO_SCAN }} | grep -i "Critical:" > scan_results 
 
           echo  "[View the Full Report](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})" >> scan_results
           
