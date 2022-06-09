@@ -124,109 +124,38 @@ jobs:
           # slack-message: "GitHub build result: ${{ job.status }}\n${{ github.event.pull_request.html_url || github.event.head_commit.url }}"
           payload: |
             {
+              "type": "modal",
+              "title": {
+                "type": "plain_text",
+                "text": "My App",
+                "emoji": true
+              },
+              "submit": {
+                "type": "plain_text",
+                "text": "Submit",
+                "emoji": true
+              },
+              "close": {
+                "type": "plain_text",
+                "text": "Cancel",
+                "emoji": true
+              },
               "blocks": [
                 {
                   "type": "section",
                   "text": {
                     "type": "mrkdwn",
-                    "text": "Hello, Assistant to the Regional Manager Dwight! *Michael Scott* wants to know where you'd like to take the Paper Company investors to dinner tonight.\n\n *Please select a restaurant:*"
+                    "text": "*CRITICAL* Vulenrabilities Found!"
                   }
                 },
                 {
                   "type": "divider"
-                },
-                {
-                  "type": "section",
-                  "text": {
-                    "type": "mrkdwn",
-                    "text": "*Farmhouse Thai Cuisine*\n:star::star::star::star: 1528 reviews\n They do have some vegan options, like the roti and curry, plus they have a ton of salad stuff and noodles can be ordered without meat!! They have something for everyone here"
-                  },
-                  "accessory": {
-                    "type": "image",
-                    "image_url": "https://s3-media3.fl.yelpcdn.com/bphoto/c7ed05m9lC2EmA3Aruue7A/o.jpg",
-                    "alt_text": "alt text for image"
-                  }
-                },
-                {
-                  "type": "section",
-                  "text": {
-                    "type": "mrkdwn",
-                    "text": "*Kin Khao*\n:star::star::star::star: 1638 reviews\n The sticky rice also goes wonderfully with the caramelized pork belly, which is absolutely melt-in-your-mouth and so soft."
-                  },
-                  "accessory": {
-                    "type": "image",
-                    "image_url": "https://s3-media2.fl.yelpcdn.com/bphoto/korel-1YjNtFtJlMTaC26A/o.jpg",
-                    "alt_text": "alt text for image"
-                  }
-                },
-                {
-                  "type": "divider"
-                },
-                {
-                  "type": "actions",
-                  "elements": [
-                    {
-                      "type": "button",
-                      "text": {
-                        "type": "plain_text",
-                        "text": "Farmhouse",
-                        "emoji": true
-                      },
-                      "value": "https://google.lk"
-                    },
-                    {
-                      "type": "button",
-                      "text": {
-                        "type": "plain_text",
-                        "text": "Kin Khao",
-                        "emoji": true
-                      },
-                      "value": "click_me_123",
-                      "url": "https://google.com"
-                    },
-                    {
-                      "type": "button",
-                      "text": {
-                        "type": "plain_text",
-                        "text": "Ler Ros",
-                        "emoji": true
-                      },
-                      "value": "click_me_123",
-                      "url": "https://google.com"
-                    }
-                  ]
-                },
-                {
-                  "type": "divider"
-                },
-                {
-                  "type": "context",
-                  "elements": [
-                    {
-                      "type": "plain_text",
-                      "text": "Author: K A Applegate",
-                      "emoji": true
-                    }
-                  ]
-                },
-                {
-                  "dispatch_action": true,
-                  "type": "input",
-                  "element": {
-                    "type": "plain_text_input",
-                    "action_id": "plain_text_input-action"
-                  },
-                  "label": {
-                    "type": "plain_text",
-                    "text": "Label",
-                    "emoji": true
-                  }
                 },
                 {
                   "type": "header",
                   "text": {
                     "type": "plain_text",
-                    "text": "This is a header block",
+                    "text": "Scan Summary",
                     "emoji": true
                   }
                 },
@@ -234,22 +163,22 @@ jobs:
                   "type": "section",
                   "text": {
                     "type": "mrkdwn",
-                    "text": "This is a section block with a button."
+                    "text": "See the Full Scanning Report"
                   },
                   "accessory": {
                     "type": "button",
                     "text": {
                       "type": "plain_text",
-                      "text": "Click Me",
+                      "text": "Report",
                       "emoji": true
                     },
-                    "value": "click_me_123",
+                    "value": "report",
                     "url": "https://google.com",
                     "action_id": "button-action"
                   }
                 }
               ]
-            }
+            }            
         env:
           SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK }}
           SLACK_WEBHOOK_TYPE: INCOMING_WEBHOOK
