@@ -6,7 +6,7 @@ on:
 
 env:
   IMAGE: "ecr-scan-poc"
-  IMAGE_ID: "3"
+  IMAGE_ID: "2"
   PWD: ${{ github.workspace }}
   TEST_IMAGE: httpd
   PR_NUMBER: ${{ github.event.number }}
