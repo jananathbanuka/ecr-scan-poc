@@ -51,7 +51,7 @@ jobs:
           IFS=: read critical1 critical2 <<< $var1
           IFS=: read high1 high2 <<< $var2
 
-          echo -e "---\n:boom: Test Results \n| Severity  | Number of Vulnerabilities|\n| ------------- | ------------- |\n| $critical1    | $critical2  |\n| $high1        | $high2  |\n" >> pr_body
+          echo -e "---\n##:boom: Test Results \n| Severity  | Number of Vulnerabilities|\n| ------------- | ------------- |\n| $critical1    | $critical2  |\n| $high1        | $high2  |\n" >> pr_body
           
           echo  ":point_right: [View the Full Report](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})" >> pr_body
 
