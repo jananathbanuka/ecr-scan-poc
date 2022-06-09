@@ -47,6 +47,14 @@ jobs:
 
           trivy image --format template --template '{{- $critical := 0 }}{{- $high := 0 }}{{- range . }}{{- range .Vulnerabilities }}{{- if  eq .Severity "CRITICAL" }}{{- $critical = add $critical 1 }}{{- end }}{{- if  eq .Severity "HIGH" }}{{- $high = add $high 1 }}{{- end }}{{- end }}{{- end }}Critical: {{ $critical }}, High: {{ $high }}' ${{ env.DOCKER_IMAGE_TO_SCAN }} | grep -i "Critical:" > scan_results 
 
+          content=$(cat scan_results)
+          
+          split_by_comma=($(echo "$content" | tr ',' '\n'))
+          critical=($(echo ${split_by_comma[0]} | tr ':' '\n'))
+          high=($(echo ${split_by_comma[1]} | tr ':' '\n'))
+
+          echo -e "\n| Severity Level  | Number of vulnerabilities found |\n| ------------- | ------------- |\n| echo ${critical[0]}  | echo ${critical[1]}  |\n| echo ${high[0]}  | echo ${high[1]}  |" >> scan_results
+
           echo  "[View the Full Report](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})" >> scan_results
           
           echo 'SUMMARY_OF_THE_SCAN<<EOF' >> $GITHUB_ENV
