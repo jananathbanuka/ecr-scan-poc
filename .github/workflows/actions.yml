@@ -6,7 +6,7 @@ on:
 
 env:
   IMAGE: "ecr-scan-poc"
-  IMAGE_ID: "3"
+  IMAGE_ID: "latest"
   PWD: ${{ github.workspace }}
   TEST_IMAGE: httpd
   PR_NUMBER: ${{ github.event.number }}
@@ -209,7 +209,7 @@ jobs:
                           "emoji": true
                         },
                         "value": "report",
-                        "url": "https://google.com",
+                        "url": "${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}",
                         "action_id": "button-action"
                       }
                     }
