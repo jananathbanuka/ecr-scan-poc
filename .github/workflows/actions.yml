@@ -21,13 +21,31 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
     
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_KEY }}
+          aws-region: eu-central-1
+
+
+      - name: Login to Amazon ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v1  
+
+      - name: Set Docker Image Env
+        run: |
+          ACCOUNT_ID=$(aws sts get-caller-identity | jq -r '.Account')
+          echo "DOCKER_IMAGE_TO_SCAN=${ACCOUNT_ID}.dkr.ecr.eu-central-1.amazonaws.com/${IMAGE}:${IMAGE_ID}" >> $GITHUB_ENV
+
+
       - name: Get Results
         # container: docker:dind
         run: |
           wget -q --show-progress https://github.com/aquasecurity/trivy/releases/download/v0.18.3/trivy_0.18.3_Linux-64bit.deb
           sudo dpkg -i trivy_0.18.3_Linux-64bit.deb
 
-          trivy image node:10 | grep -i "Total:" -A1 -B2 > scan_results
+          trivy image ${{ env.DOCKER_IMAGE_TO_SCAN }} | grep -i "Total:" -A1 -B2 > scan_results
           echo 'SUMMARY_OF_THE_SCAN<<EOF' >> $GITHUB_ENV
           cat scan_results >> $GITHUB_ENV
           echo 'EOF' >> $GITHUB_ENV
