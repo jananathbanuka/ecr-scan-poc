@@ -106,11 +106,11 @@ jobs:
           SLACK_CHANNEL: trivy-scans
           SLACK_COLOR: '#FF0000' #${{ job.status }} # or a specific color like 'good' or '#ff00ff'
           SLACK_ICON: https://github.com/rtCamp.png?size=48
-          SLACK_MESSAGE: 'Post Content :rocket:'
+          SLACK_MESSAGE: '>Please fix the vulnerabilities :rocket:'
           SLACK_TITLE: CRITICAL Vulnerabilities Found!
           SLACK_USERNAME: e-bot7
           SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
-          MSG_MINIMAL: ref,commit
+          MSG_MINIMAL: ref,actions url
           SLACK_FOOTER: Trivy | e-bot7
           SLACK_LINK_NAMES: "true"
           SLACK_ICON_EMOJI: ":bangbang:"
