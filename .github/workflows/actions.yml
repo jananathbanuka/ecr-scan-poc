@@ -6,7 +6,7 @@ on:
 
 env:
   IMAGE: "ecr-scan-poc"
-  IMAGE_ID: "latest"
+  IMAGE_ID: "3"
   PWD: ${{ github.workspace }}
   TEST_IMAGE: httpd
   PR_NUMBER: ${{ github.event.number }}
@@ -177,8 +177,7 @@ jobs:
                         },
                         {
                           "type": "mrkdwn",
-                          "text": "`Critical`",
-       
+                          "text": "`Critical`",       
                         },
                         {
                           "type": "mrkdwn",
@@ -186,8 +185,7 @@ jobs:
                         },
                         {
                           "type": "mrkdwn",
-                          "text": "`High`",
-                 
+                          "text": "`High`",                 
                         },
                         {
                           "type": "mrkdwn",
