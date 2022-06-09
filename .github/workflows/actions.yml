@@ -54,10 +54,14 @@ jobs:
           if [ "$critical2" -eq 0 ]; then
             critical_emoji=":white_check_mark:"
           fi
-
+          
           high_emoji=":large_orange_diamond:"
+          high_vulnerabilities_found="false"
           if [ "$high2" -eq 0 ]; then
             high_emoji=":white_check_mark:"
+          else
+            high_vulnerabilities_found="true"
+            echo "HIGH_VULNERABILITIES_FOUND=${high_vulnerabilities_found}" >> $GITHUB_ENV                        
           fi          
 
           test_result_emoji=":boom:"
@@ -66,9 +70,11 @@ jobs:
             test_result_emoji=":eight_spoked_asterisk:"
           else
             critical_vulnerabilities_found="true"
-            echo "CRITICAL_VULNERABILITIES_FOUND=${critical_vulnerabilities_found}" >> $GITHUB_ENV
-            echo "incorrect"
+            echo "CRITICAL_VULNERABILITIES_FOUND=${critical_vulnerabilities_found}" >> $GITHUB_ENV          
           fi 
+
+          echo "CRITICAL_NUMBER_OF_VULNERABILITIES=${critical2}" >> $GITHUB_ENV
+          echo "HIGH_NUMBER_OF_VULNERABILITIES=${high2}" >> $GITHUB_ENV
 
           echo -e "---\n### $test_result_emoji Test Results \n| Severity  | Number of Vulnerabilities|\n| ------------- | ------------- |\n| $critical_emoji $critical1    | $critical2  |\n| $high_emoji $high1        | $high2  |\n" >> pr_body
           
@@ -118,67 +124,92 @@ jobs:
       - name: Send custom JSON data to Slack workflow
         id: slack
         uses: slackapi/slack-github-action@v1.19.0
+        if: (${{ env.CRITICAL_VULNERABILITIES_FOUND }} == 'true') || (${{ env.HIGH_VULNERABILITIES_FOUND }} == 'true')
         with:
           channel-id: 'C03K0R0QTU3'
           # This data can be any valid JSON from a previous step in the GitHub Action
           # slack-message: "GitHub build result: ${{ job.status }}\n${{ github.event.pull_request.html_url || github.event.head_commit.url }}"
           payload: |
             {
-              "type": "modal",
-              "title": {
-                "type": "plain_text",
-                "text": "My App",
-                "emoji": true
-              },
-              "submit": {
-                "type": "plain_text",
-                "text": "Submit",
-                "emoji": true
-              },
-              "close": {
-                "type": "plain_text",
-                "text": "Cancel",
-                "emoji": true
-              },
-              "blocks": [
+              "attachments": [
                 {
-                  "type": "section",
-                  "text": {
-                    "type": "mrkdwn",
-                    "text": "*CRITICAL* Vulenrabilities Found!"
-                  }
-                },
-                {
-                  "type": "divider"
-                },
-                {
-                  "type": "header",
-                  "text": {
-                    "type": "plain_text",
-                    "text": "Scan Summary",
-                    "emoji": true
-                  }
-                },
-                {
-                  "type": "section",
-                  "text": {
-                    "type": "mrkdwn",
-                    "text": "See the Full Scanning Report"
-                  },
-                  "accessory": {
-                    "type": "button",
-                    "text": {
-                      "type": "plain_text",
-                      "text": "Report",
-                      "emoji": true
+                  "color": "#DB6249",
+                  "blocks": [
+                    {
+                      "type": "header",
+                      "text": {
+                        "type": "plain_text",
+                        "text": ":boom: CRITICAL Vulenrabilities Found!",
+                        "emoji": true
+                      }
                     },
-                    "value": "report",
-                    "url": "https://google.com",
-                    "action_id": "button-action"
-                  }
+                    {
+                      "type": "divider"
+                    },
+                    {
+                      "type": "header",
+                      "text": {
+                        "type": "plain_text",
+                        "text": ":memo: Scan Summary",
+                        "emoji": true
+                      }
+                    },
+                    {
+                      "type": "divider"
+                    },
+                    {
+                      "type": "section",
+                      "fields": [
+                        {
+                          "type": "mrkdwn",
+                          "text": "*Severity*"
+                        },
+                        {
+                          "type": "mrkdwn",
+                          "text": "*Vulnerability Count*"
+                        },
+                        {
+                          "type": "plain_text",
+                          "text": "$critical1",
+                          "emoji": true
+                        },
+                        {
+                          "type": "mrkdwn",
+                          "text": "${{ env.CRITICAL_NUMBER_OF_VULNERABILITIES }}"
+                        },
+                        {
+                          "type": "plain_text",
+                          "text": "$high1",
+                          "emoji": true
+                        },
+                        {
+                          "type": "mrkdwn",
+                          "text": "${{ env.HIGH_NUMBER_OF_VULNERABILITIES }}"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "section",
+                      "text": {
+                        "type": "mrkdwn",
+                        "text": "See the Full Scanning Report"
+                      },
+                      "accessory": {
+                        "type": "button",
+                        "text": {
+                          "type": "plain_text",
+                          "text": "Report",
+                          "emoji": true
+                        },
+                        "value": "report",
+                        "url": "https://google.com",
+                        "action_id": "button-action"
+                      }
+                    }
+                  ]
                 }
               ]
-            }            
+            }                               
         env:
           SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK }}
           SLACK_WEBHOOK_TYPE: INCOMING_WEBHOOK
