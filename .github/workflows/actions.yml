@@ -115,6 +115,20 @@ jobs:
           SLACK_LINK_NAMES: true
           SLACK_ICON_EMOJI: ":bangbang:"
 
+      - name: Send custom JSON data to Slack workflow
+        id: slack
+        uses: slackapi/slack-github-action@v1.19.0
+        with:
+          channel-id: 'C03K0R0QTU3'
+          # This data can be any valid JSON from a previous step in the GitHub Action
+          payload: |
+            {
+              "key": "value",
+              "foo": "bar"
+            }
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK }} 
+
 
 
 
