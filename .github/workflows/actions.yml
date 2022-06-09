@@ -176,7 +176,7 @@ jobs:
                           "text": "```Vulnerability Count```"
                         },
                         {
-                          "type": "plain_text",
+                          "type": "mrkdwn",
                           "text": "`Critical`",
                           "emoji": true
                         },
@@ -185,7 +185,7 @@ jobs:
                           "text": "${{ env.CRITICAL_NUMBER_OF_VULNERABILITIES }}"
                         },
                         {
-                          "type": "plain_text",
+                          "type": "mrkdwn",
                           "text": "`High`",
                           "emoji": true
                         },
