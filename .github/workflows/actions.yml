@@ -47,7 +47,7 @@ jobs:
 
           trivy image ${{ env.DOCKER_IMAGE_TO_SCAN }} | grep -i "Total:" -A1 -B2 > scan_results
 
-          echo  "[View the Full Report](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})." >> scan_results
+          echo  "[View the Full Report](${{ github.server_url }}/${{ github.repository }}/runs/${{ github.run_id }}?check_suite_focus=true)." >> scan_results
           
           echo 'SUMMARY_OF_THE_SCAN<<EOF' >> $GITHUB_ENV
           cat scan_results >> $GITHUB_ENV
