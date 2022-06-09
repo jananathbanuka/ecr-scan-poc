@@ -62,7 +62,10 @@ jobs:
 
           test_result_emoji=":boom:"
           if [ "$critical2" -eq 0 ] && ["$high2" -eq 0]; then
+            echo "correct"
             test_result_emoji=":eight_spoked_asterisk:"
+          else
+            echo "incorrect"
           fi 
 
           echo -e "---\n### $test_result_emoji Test Results \n| Severity  | Number of Vulnerabilities|\n| ------------- | ------------- |\n| $critical_emoji $critical1    | $critical2  |\n| $high_emoji $high1        | $high2  |\n" >> pr_body
