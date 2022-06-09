@@ -53,10 +53,7 @@ jobs:
           critical=($(echo "$split_by_comma[0]" | tr ':' '\n'))
           high=($(echo "$split_by_comma[1]" | tr ':' '\n'))
 
-          echo -n "| Severity Level | Number of vulnerabilities found |\n \
-          | --- | --- | \n \
-          | $critical[0] | $critical[1] | \n \
-          | $high[0] | $high[1] |" >> scan_results
+          echo -n "| Severity Level | Number of vulnerabilities found |\n| --- | --- | \n| $critical[0] | $critical[1] |\n| $high[0] | $high[1] |" >> scan_results
 
           echo  "[View the Full Report](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})" >> scan_results
           
