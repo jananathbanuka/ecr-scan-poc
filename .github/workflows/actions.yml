@@ -34,7 +34,7 @@ jobs:
           echo '----------------------------------------------------------------------------'
           echo $FILE_CONTENT  
           echo '----------------------------------------------------------------------------'\
-          #echo "SCAN_SUMMARY<<${FILE_CONTENT}" >> $GITHUB_ENV
+          
           
       # - uses: actions/upload-artifact@master
       #   with:
