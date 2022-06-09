@@ -31,7 +31,7 @@ jobs:
           ls
           cat result.txt
           FILE_CONTENT=$(cat result.txt)    
-          echo "SCAN_SUMMARY=${FILE_CONTENT}" >> $GITHUB_ENV
+          echo "SCAN_SUMMARY<<${FILE_CONTENT}" >> $GITHUB_ENV
           
       - uses: actions/upload-artifact@master
         with:
