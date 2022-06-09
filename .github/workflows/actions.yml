@@ -56,7 +56,7 @@ jobs:
           echo -e "\n---\n| Severity  | Number of Vulnerabilities|\n| ------------- | ------------- |\n| $critical1    | $critical2  |\n| $high1        | $high2  |\n" >> pr_body
           
 
-          echo  ":point_right: [View the Full Report](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})" >> pr_body
+          echo  ":point_right: [View the Full Report](${{ github.server_url }}/${{ github.repository }}/runs/${{ github.job }})" >> pr_body
           
           echo 'SUMMARY_OF_THE_SCAN<<EOF' >> $GITHUB_ENV
           cat pr_body >> $GITHUB_ENV
