@@ -24,6 +24,9 @@ jobs:
       - name: Get Results
         # container: docker:dind
         run: |
+          wget https://github.com/aquasecurity/trivy/releases/download/v0.18.3/trivy_0.18.3_Linux-64bit.deb
+          sudo dpkg -i trivy_0.18.3_Linux-64bit.deb
+
           trivy image python:3.4-alpine | grep -i "Total:" -A1 -B2 > result.txt
           ls
           cat result.txt
@@ -39,9 +42,9 @@ jobs:
         run: |
           echo "PR number is: ${{ env.PR_NUMBER }}" >> result.txt  
           
-  update-pr:
-    runs-on: ubuntu-latest
-    steps:
+  # update-pr:
+  #   runs-on: ubuntu-latest
+  #   steps:
       - name: UPDATE PR
         uses: tzkhan/pr-update-action@v2
         with:
