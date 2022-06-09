@@ -183,7 +183,7 @@ jobs:
                         },
                         {
                           "type": "mrkdwn",
-                          "text": "Critical"
+                          "text": "${{ env.CRITICAL_EMOJI }} Critical"
                         },
                         {
                           "type": "mrkdwn",
@@ -191,7 +191,7 @@ jobs:
                         },
                         {
                           "type": "mrkdwn",
-                          "text": "High"
+                          "text": "${{ env.HIGH_EMOJI }} High"
                         },
                         {
                           "type": "mrkdwn",
