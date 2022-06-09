@@ -110,7 +110,7 @@ jobs:
           SLACK_TITLE: CRITICAL Vulnerabilities Found!
           SLACK_USERNAME: e-bot7
           SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
-          MSG_MINIMAL: ref,actions url
+          MSG_MINIMAL: actions url
           SLACK_FOOTER: Trivy | e-bot7
           SLACK_LINK_NAMES: true
           SLACK_ICON_EMOJI: ":bangbang:"
