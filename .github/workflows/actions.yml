@@ -90,6 +90,8 @@ jobs:
           
           echo  ":memo: [View the Full Report](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})" >> pr_body
 
+          echo "GITHUB_ACTION_URL=${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" >> $GITHUB_ENV
+
           # Reset the variable
           echo 'SUMMARY_OF_THE_SCAN=' >> $GITHUB_ENV
           
@@ -149,7 +151,7 @@ jobs:
                       "type": "header",
                       "text": {
                         "type": "plain_text",
-                        "text": "${{ env.TEST_RESULT_EMOJI }} CRITICAL Vulenrabilities Found!",
+                        "text": "${{ env.TEST_RESULT_EMOJI }} Vulenrability Test Results!",
                         "emoji": true
                       }
                     },
@@ -207,7 +209,7 @@ jobs:
                           "emoji": true
                         },
                         "value": "report",
-                        "url": "${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}",
+                        "url": "${{ env.GITHUB_ACTION_URL}}",
                         "action_id": "button-action"
                       }
                     }
