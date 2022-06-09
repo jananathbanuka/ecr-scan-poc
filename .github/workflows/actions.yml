@@ -112,8 +112,8 @@ jobs:
           SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
           MSG_MINIMAL: ref,commit
           SLACK_FOOTER: Trivy | e-bot7
-          SLACK_LINK_NAMES: true
-          SLACK_ICON_EMOJI: :bangbang:
+          SLACK_LINK_NAMES: "true"
+          SLACK_ICON_EMOJI: ":bangbang:"
 
 
 
