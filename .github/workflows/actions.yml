@@ -169,15 +169,15 @@ jobs:
                       "fields": [
                         {
                           "type": "mrkdwn",
-                          "text": "*Severity*"
+                          "text": "```Severity```"
                         },
                         {
                           "type": "mrkdwn",
-                          "text": "*Vulnerability Count*"
+                          "text": "```Vulnerability Count```"
                         },
                         {
                           "type": "plain_text",
-                          "text": "Critical",
+                          "text": "`Critical`",
                           "emoji": true
                         },
                         {
@@ -186,7 +186,7 @@ jobs:
                         },
                         {
                           "type": "plain_text",
-                          "text": "High",
+                          "text": "`High`",
                           "emoji": true
                         },
                         {
