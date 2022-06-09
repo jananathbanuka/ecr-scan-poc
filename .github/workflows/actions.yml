@@ -39,7 +39,7 @@ jobs:
           echo "DOCKER_IMAGE_TO_SCAN=${ACCOUNT_ID}.dkr.ecr.eu-central-1.amazonaws.com/${IMAGE}:${IMAGE_ID}" >> $GITHUB_ENV
 
 
-      - name: Get Results
+      - name: Prepare the PR
         # container: docker:dind
         run: |
           wget --no-verbose https://github.com/aquasecurity/trivy/releases/download/v0.18.3/trivy_0.18.3_Linux-64bit.deb
@@ -61,22 +61,8 @@ jobs:
           echo 'SUMMARY_OF_THE_SCAN<<EOF' >> $GITHUB_ENV
           cat pr_body >> $GITHUB_ENV
           echo 'EOF' >> $GITHUB_ENV
-
           
-          
-      # - uses: actions/upload-artifact@master
-      #   with:
-      #     name: result-file
-      #     path: result.txt
-          
-      - name: get cwd
-        run: |
-          echo "PR number is: ${{ env.PR_NUMBER }}" >> result.txt  
-          
-  # update-pr:
-  #   runs-on: ubuntu-latest
-  #   steps:
-      - name: UPDATE PR
+      - name: Updare the PR
         uses: tzkhan/pr-update-action@v2
         with:
           repo-token: "${{ secrets.GITHUB_TOKEN }}"
@@ -87,6 +73,12 @@ jobs:
             ${{ env.SUMMARY_OF_THE_SCAN }}
           body-update-action: 'suffix'
           body-uppercase-base-match: false
+
+      - name: Developers - View Complete Report
+        
+        run: |
+          trivy image ${{ env.DOCKER_IMAGE_TO_SCAN }}
+  
 
       
 
