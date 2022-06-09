@@ -62,7 +62,7 @@ jobs:
           fi          
 
           test_result_emoji=":boom:"
-          if [ "$critical2" -eq 0 -a  "$high2" -eq 0]; then
+          if [ "$critical2" -eq 0 ] && ["$high2" -eq 0]; then
             test_result_emoji=":eight_spoked_asterisk:"
           fi 
 
