@@ -19,7 +19,7 @@ jobs:
 
       - name: Trivy Scan
         id: trivy
-        uses: jananathbanuka/ecr-scan-poc-base@master
+        uses: jananathbanuka/ecr-scan-poc-base@main
         with:
           IMAGE: httpd
 
