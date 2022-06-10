@@ -263,14 +263,13 @@ jobs:
         with:
           image-ref: '${{ env.DOCKER_IMAGE_TO_SCAN }}'
           severity: 'HIGH,CRITICAL'
-          # format: 'table'
           template: "@${{ env.PWD }}/default.tpl" 
           output: "trivy-scan-results.txt"
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_KEY }}
 
-      # - name: Trivy Scane - High and Critical Vulnerabilities
+      # - name: Trivy Scan - High and Critical Vulnerabilities
       #   uses: aquasecurity/trivy-action@master
       #   with:
       #     image-ref: '${{ env.DOCKER_IMAGE_TO_SCAN }}'
