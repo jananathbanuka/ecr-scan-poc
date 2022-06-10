@@ -263,7 +263,7 @@ jobs:
         with:
           image-ref: '${{ env.DOCKER_IMAGE_TO_SCAN }}'
           severity: 'HIGH,CRITICAL'
-          format: 'table'
+          # format: 'table'
           template: "@${{ env.PWD }}/default.tpl" 
           output: "trivy-scan-results.txt"
         env:
