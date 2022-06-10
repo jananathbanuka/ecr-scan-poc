@@ -13,6 +13,7 @@ env:
   THIS_BRANCH: ${{ github.head_ref }}
 
 jobs:
+
   trivy:
     runs-on: ubuntu-latest
     steps:
