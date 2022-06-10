@@ -25,17 +25,10 @@ jobs:
         id: trivy
         uses: jananathbanuka/ecr-scan-poc-base@main
         with:
-          IMAGE: 0.10.38-wheezy
+          IMAGE: node:0.10.38-wheezy
           NOTIFICATION_TYPES: 'slack'
           GITHUB_ACCESS_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
           SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK }}
-
-
-
-
-
-
-
 
 
 
