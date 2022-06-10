@@ -22,6 +22,7 @@ jobs:
         uses: jananathbanuka/ecr-scan-poc-base@main
         with:
           IMAGE: httpd
+          
 
   #     - name: Checkout code
   #       uses: actions/checkout@v3
