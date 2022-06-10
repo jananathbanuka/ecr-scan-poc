@@ -15,7 +15,7 @@ on:
 
 jobs:
 
-  trivy:
+  ebot7-trivy:
     runs-on: ubuntu-latest
     
 
