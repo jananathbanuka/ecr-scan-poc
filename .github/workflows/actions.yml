@@ -18,7 +18,7 @@ jobs:
   trivy:
     runs-on: ubuntu-latest
     
-    
+
     steps:
       - uses: actions/checkout@v3
       - name: Trivy Scan
@@ -26,6 +26,7 @@ jobs:
         uses: jananathbanuka/ecr-scan-poc-base@main
         with:
           IMAGE: httpd
+
 
 
   #     - name: Checkout code
