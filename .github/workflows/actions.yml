@@ -291,6 +291,7 @@ jobs:
       - name: Cat the Scan Result
         run: |
           cat trivy-scan-results.txt
+          cat test.txt
 
       # - name: Daily Vulnerability Scan
       #   uses: lazy-actions/gitrivy@v3
