@@ -26,7 +26,7 @@ jobs:
         uses: jananathbanuka/ecr-scan-poc-base@main
         with:
           IMAGE: node:10
-          NOTIFICATION_TYPES: 'slack'
+          NOTIFICATION_TYPES: 'pull_request'
           GITHUB_ACCESS_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
           SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK }}
 
