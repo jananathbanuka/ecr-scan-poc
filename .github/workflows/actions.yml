@@ -293,18 +293,18 @@ jobs:
           cat trivy-scan-results.txt
           cat test.txt
 
-      # - name: Daily Vulnerability Scan
-      #   uses: lazy-actions/gitrivy@v3
-      #   with:
-      #     token: ${{ secrets.GITHUB_TOKEN }}
-      #     image: ${{ env.TEST_IMAGE }}
-      #     severity: "CRITICAL"
-      #     trivy_version: "0.22.0" # https://github.com/aquasecurity/trivy/discussions/1515
-      #     issue_title: "[Critical Vulnerability] - ${{ github.ref_name }} / ${{ github.event.head_commit.message }}"
-      #     issue_label: devops
-      #     template: "@${{ env.PWD }}/default.tpl" 
-          # ignore_unfixed: true
-          # vuln_type: os
+      - name: Daily Vulnerability Scan
+        uses: lazy-actions/gitrivy@v3
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          image: ${{ env.TEST_IMAGE }}
+          # severity: "CRITICAL"
+          # trivy_version: "0.22.0" # https://github.com/aquasecurity/trivy/discussions/1515
+          # issue_title: "[Critical Vulnerability] - ${{ github.ref_name }} / ${{ github.event.head_commit.message }}"
+          # issue_label: devops
+          template: "@${{ env.PWD }}/default.tpl" 
+          ignore_unfixed: true
+          vuln_type: os
 
 
   # Anchore:
