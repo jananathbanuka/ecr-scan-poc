@@ -13,243 +13,19 @@ env:
   THIS_BRANCH: ${{ github.head_ref }}
 
 jobs:
-  trivy:
-    runs-on: ubuntu-latest
-    steps:
-
-      - name: Checkout code
-        uses: actions/checkout@v3
-    
-      - name: Configure AWS credentials
-        uses: aws-actions/configure-aws-credentials@v1
-        with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_KEY }}
-          aws-region: eu-central-1
-
-      - name: Login to Amazon ECR
-        id: login-ecr
-        uses: aws-actions/amazon-ecr-login@v1  
-
-      - name: Set Docker Image Env
-        run: |
-          ACCOUNT_ID=$(aws sts get-caller-identity | jq -r '.Account')
-          echo "DOCKER_IMAGE_TO_SCAN=${ACCOUNT_ID}.dkr.ecr.eu-central-1.amazonaws.com/${IMAGE}:${IMAGE_ID}" >> $GITHUB_ENV
-
-      - name: Prepare the PR
-        # container: docker:dind
-        run: |
-          wget --no-verbose https://github.com/aquasecurity/trivy/releases/download/v0.18.3/trivy_0.18.3_Linux-64bit.deb
-          sudo dpkg -i trivy_0.18.3_Linux-64bit.deb 2> /dev/null
-
-          trivy image --format template --template '{{- $critical := 0 }}{{- $high := 0 }}{{- range . }}{{- range .Vulnerabilities }}{{- if  eq .Severity "CRITICAL" }}{{- $critical = add $critical 1 }}{{- end }}{{- if  eq .Severity "HIGH" }}{{- $high = add $high 1 }}{{- end }}{{- end }}{{- end }}Critical: {{ $critical }}, High: {{ $high }}' ${{ env.DOCKER_IMAGE_TO_SCAN }} | grep -i "Critical:" > scan_results 
-
-          content=$(cat scan_results)
-          
-          IFS=, read var1 var2 <<< $content
-          IFS=: read critical1 critical2 <<< $var1
-          IFS=: read high1 high2 <<< $var2
-          
-          slack_attachment_bar_color="#0CFE6B" # green
-          summary_report_msg="No Vulnerabilities Found, Everything looks Good!"
-
-          critical_emoji=":red_circle:"
-          if [ "$critical2" -eq 0 ]; then
-            critical_emoji=":white_check_mark:"
-          else
-            slack_attachment_bar_color="#FE360C" # red
-            summary_report_msg="CRITICAL Vulnerabilities Found!, Fix Immediately!!!"
-          fi
-          
-          high_emoji=":large_orange_diamond:"
-          high_vulnerabilities_found="false"
-          if [ "$high2" -eq 0 ]; then
-            high_emoji=":white_check_mark:"
-          elif [ $critical2 -eq 0 ] && [ $high2  -nq 0 ]; then
-            high_vulnerabilities_found="true"
-            slack_attachment_bar_color="#FBB215" # orange\
-            summary_report_msg="HIGH Vulnerabilities Found!, Have a Look!"
-            echo "HIGH_VULNERABILITIES_FOUND=${high_vulnerabilities_found}" >> $GITHUB_ENV                        
-          fi          
-
-          test_result_emoji=":boom:"
-          critical_vulnerabilities_found="false"
-          if [ $critical2 -eq 0 ] && [ $high2  -eq 0 ]; then
-            test_result_emoji=":eight_spoked_asterisk:"
-          else
-            critical_vulnerabilities_found="true"
-            echo "CRITICAL_VULNERABILITIES_FOUND=${critical_vulnerabilities_found}" >> $GITHUB_ENV          
-          fi 
-
-          echo "CRITICAL_NUMBER_OF_VULNERABILITIES=${critical2}" >> $GITHUB_ENV
-          echo "HIGH_NUMBER_OF_VULNERABILITIES=${high2}" >> $GITHUB_ENV
-
-          echo "CRITICAL_EMOJI=${critical_emoji}" >> $GITHUB_ENV
-          echo "HIGH_EMOJI=${high_emoji}" >> $GITHUB_ENV
-          echo "TEST_RESULT_EMOJI=${test_result_emoji}" >> $GITHUB_ENV
-          echo "SLACK_ATTACHMENT_BAR_COLOR=${slack_attachment_bar_color}" >> $GITHUB_ENV
-          echo "SUMMARY_REPORT_MSG=${summary_report_msg}" >> $GITHUB_ENV
-          echo "GITHUB_ACTION_URL=${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" >> $GITHUB_ENV
-
-          echo -e "---\n### $test_result_emoji Test Results \n| Severity  | Number of Vulnerabilities|\n| ------------- | ------------- |\n| $critical_emoji $critical1    | $critical2  |\n| $high_emoji $high1        | $high2  |\n" >> pr_body
-          
-          echo  ":memo: [View the Full Report](${{ env.GITHUB_ACTION_URL }})" >> pr_body
-
-          # Reset the variable
-          echo 'SUMMARY_OF_THE_SCAN=' >> $GITHUB_ENV
-          
-          echo 'SUMMARY_OF_THE_SCAN<<EOF' >> $GITHUB_ENV
-          cat pr_body >> $GITHUB_ENV
-          echo 'EOF' >> $GITHUB_ENV
-          
-      - name: Updare the PR
-        uses: tzkhan/pr-update-action@v2
-        with:
-          repo-token: "${{ secrets.GITHUB_TOKEN }}"
-          base-branch-regex: '[a-z\d-_.\\/]+'
-          # head-branch-regex: '${{ env.THIS_BRANCH }}-\d+'
-          # title-template: '[%headbranch%] '
-          body-template: |           
-            ${{ env.SUMMARY_OF_THE_SCAN }}
-          body-update-action: 'suffix'
-          body-uppercase-base-match: false
-
-      - name: Developers - View Complete Report
-        
-        run: |
-          trivy image --severity HIGH,CRITICAL ${{ env.DOCKER_IMAGE_TO_SCAN }}
-  
-        
-      # - name: Slack Notification
-      #   uses: rtCamp/action-slack-notify@v2
-      #   if: ${{ env.CRITICAL_VULNERABILITIES_FOUND }} == 'true'
-      #   env:
-      #     SLACK_CHANNEL: trivy-scans
-      #     SLACK_COLOR: '#FF0000' #${{ job.status }} # or a specific color like 'good' or '#ff00ff'
-      #     SLACK_ICON: https://github.com/rtCamp.png?size=48
-      #     SLACK_MESSAGE: '> <!here> Please fix the vulnerabilities :rocket:'
-      #     SLACK_TITLE: ":bangbang: *CRITICAL Vulnerabilities Found!*"
-      #     SLACK_USERNAME: e-bot7
-      #     SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
-      #     MSG_MINIMAL: actions url
-      #     SLACK_FOOTER: Trivy | e-bot7
-      #     SLACK_LINK_NAMES: true
-      #     SLACK_ICON_EMOJI: ":bangbang:"
-
-      - name: Send Slack Notification
-        id: slack
-        uses: slackapi/slack-github-action@v1.19.0
-        if: (${{ env.CRITICAL_VULNERABILITIES_FOUND }} == 'true') || (${{ env.HIGH_VULNERABILITIES_FOUND }} == 'true')
-        with:
-          channel-id: 'C03K0R0QTU3'
-          # This data can be any valid JSON from a previous step in the GitHub Action
-          # slack-message: "GitHub build result: ${{ job.status }}\n${{ github.event.pull_request.html_url || github.event.head_commit.url }}"
-          payload: |
-            {
-              "attachments": [
-                {
-                  "color": "${{ env.SLACK_ATTACHMENT_BAR_COLOR }}",
-                  "blocks": [
-                    {
-                      "type": "header",
-                      "text": {
-                        "type": "plain_text",
-                        "text": "${{ env.TEST_RESULT_EMOJI }} ${{ env.SUMMARY_REPORT_MSG }}",
-                        "emoji": true
-                      }
-                    },
-                    {
-                      "type": "header",
-                      "text": {
-                        "type": "plain_text",
-                        "text": "Scan Summary",
-                        "emoji": true
-                      }
-                    },
-                    {
-                      "type": "divider"
-                    },
-                    {
-                      "type": "section",
-                      "fields": [
-                        {
-                          "type": "mrkdwn",
-                          "text": "```Severity```"
-                        },
-                        {
-                          "type": "mrkdwn",
-                          "text": "```Vulnerability Count```"
-                        },
-                        {
-                          "type": "mrkdwn",
-                          "text": "${{ env.CRITICAL_EMOJI }} Critical"
-                        },
-                        {
-                          "type": "mrkdwn",
-                          "text": "${{ env.CRITICAL_NUMBER_OF_VULNERABILITIES }}"
-                        },
-                        {
-                          "type": "mrkdwn",
-                          "text": "${{ env.HIGH_EMOJI }} High"
-                        },
-                        {
-                          "type": "mrkdwn",
-                          "text": "${{ env.HIGH_NUMBER_OF_VULNERABILITIES }}"
-                        }
-                      ]
-                    },
-                    {
-                      "type": "section",
-                      "text": {
-                        "type": "mrkdwn",
-                        "text": ":memo: See the Full Scanning Report"
-                      },
-                      "accessory": {
-                        "type": "button",
-                        "text": {
-                          "type": "plain_text",
-                          "text": "View Report",
-                          "emoji": true
-                        },
-                        "value": "report",
-                        "url": "${{ env.GITHUB_ACTION_URL }}",
-                        "action_id": "button-action"
-                      }
-                    }
-                  ]
-                }
-              ]
-            }                              
-        env:
-          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK }}
-          SLACK_WEBHOOK_TYPE: INCOMING_WEBHOOK
-
-
-
-
-
-
-
-  # VulnerabilityScanner:
-  #   runs-on: e-bot7
+  # trivy:
+  #   runs-on: ubuntu-latest
   #   steps:
 
   #     - name: Checkout code
   #       uses: actions/checkout@v3
-
-  #     - name: get cwd
-  #       run: |
-  #         pwd
-  #         ls
-  #         cat README.md        
-
+    
   #     - name: Configure AWS credentials
   #       uses: aws-actions/configure-aws-credentials@v1
   #       with:
   #         aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY }}
   #         aws-secret-access-key: ${{ secrets.AWS_SECRET_KEY }}
   #         aws-region: eu-central-1
-
 
   #     - name: Login to Amazon ECR
   #       id: login-ecr
@@ -260,24 +36,244 @@ jobs:
   #         ACCOUNT_ID=$(aws sts get-caller-identity | jq -r '.Account')
   #         echo "DOCKER_IMAGE_TO_SCAN=${ACCOUNT_ID}.dkr.ecr.eu-central-1.amazonaws.com/${IMAGE}:${IMAGE_ID}" >> $GITHUB_ENV
 
-  #     - name: pull images
+  #     - name: Prepare the PR
+  #       # container: docker:dind
   #       run: |
-  #         docker pull ${{ env.TEST_IMAGE }}
+  #         wget --no-verbose https://github.com/aquasecurity/trivy/releases/download/v0.18.3/trivy_0.18.3_Linux-64bit.deb
+  #         sudo dpkg -i trivy_0.18.3_Linux-64bit.deb 2> /dev/null
 
-      # - name: Trivy Scane - Unknown, Low and Medium Vulnerabilities
-      #   uses: aquasecurity/trivy-action@master
-      #   with:
-      #     image-ref: '${{ env.TEST_IMAGE }}' #'${{ env.DOCKER_IMAGE_TO_SCAN }}'
-      #     severity: 'UNKNOWN,LOW,MEDIUM'
-      #     format: 'table'
-      #   env:
-      #     AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY }}
-      #     AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_KEY }}
+  #         trivy image --format template --template '{{- $critical := 0 }}{{- $high := 0 }}{{- range . }}{{- range .Vulnerabilities }}{{- if  eq .Severity "CRITICAL" }}{{- $critical = add $critical 1 }}{{- end }}{{- if  eq .Severity "HIGH" }}{{- $high = add $high 1 }}{{- end }}{{- end }}{{- end }}Critical: {{ $critical }}, High: {{ $high }}' ${{ env.DOCKER_IMAGE_TO_SCAN }} | grep -i "Critical:" > scan_results 
+
+  #         content=$(cat scan_results)
+          
+  #         IFS=, read var1 var2 <<< $content
+  #         IFS=: read critical1 critical2 <<< $var1
+  #         IFS=: read high1 high2 <<< $var2
+          
+  #         slack_attachment_bar_color="#0CFE6B" # green
+  #         summary_report_msg="No Vulnerabilities Found, Everything looks Good!"
+
+  #         critical_emoji=":red_circle:"
+  #         if [ "$critical2" -eq 0 ]; then
+  #           critical_emoji=":white_check_mark:"
+  #         else
+  #           slack_attachment_bar_color="#FE360C" # red
+  #           summary_report_msg="CRITICAL Vulnerabilities Found!, Fix Immediately!!!"
+  #         fi
+          
+  #         high_emoji=":large_orange_diamond:"
+  #         high_vulnerabilities_found="false"
+  #         if [ "$high2" -eq 0 ]; then
+  #           high_emoji=":white_check_mark:"
+  #         elif [ $critical2 -eq 0 ] && [ $high2  -nq 0 ]; then
+  #           high_vulnerabilities_found="true"
+  #           slack_attachment_bar_color="#FBB215" # orange\
+  #           summary_report_msg="HIGH Vulnerabilities Found!, Have a Look!"
+  #           echo "HIGH_VULNERABILITIES_FOUND=${high_vulnerabilities_found}" >> $GITHUB_ENV                        
+  #         fi          
+
+  #         test_result_emoji=":boom:"
+  #         critical_vulnerabilities_found="false"
+  #         if [ $critical2 -eq 0 ] && [ $high2  -eq 0 ]; then
+  #           test_result_emoji=":eight_spoked_asterisk:"
+  #         else
+  #           critical_vulnerabilities_found="true"
+  #           echo "CRITICAL_VULNERABILITIES_FOUND=${critical_vulnerabilities_found}" >> $GITHUB_ENV          
+  #         fi 
+
+  #         echo "CRITICAL_NUMBER_OF_VULNERABILITIES=${critical2}" >> $GITHUB_ENV
+  #         echo "HIGH_NUMBER_OF_VULNERABILITIES=${high2}" >> $GITHUB_ENV
+
+  #         echo "CRITICAL_EMOJI=${critical_emoji}" >> $GITHUB_ENV
+  #         echo "HIGH_EMOJI=${high_emoji}" >> $GITHUB_ENV
+  #         echo "TEST_RESULT_EMOJI=${test_result_emoji}" >> $GITHUB_ENV
+  #         echo "SLACK_ATTACHMENT_BAR_COLOR=${slack_attachment_bar_color}" >> $GITHUB_ENV
+  #         echo "SUMMARY_REPORT_MSG=${summary_report_msg}" >> $GITHUB_ENV
+  #         echo "GITHUB_ACTION_URL=${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" >> $GITHUB_ENV
+
+  #         echo -e "---\n### $test_result_emoji Test Results \n| Severity  | Number of Vulnerabilities|\n| ------------- | ------------- |\n| $critical_emoji $critical1    | $critical2  |\n| $high_emoji $high1        | $high2  |\n" >> pr_body
+          
+  #         echo  ":memo: [View the Full Report](${{ env.GITHUB_ACTION_URL }})" >> pr_body
+
+  #         # Reset the variable
+  #         echo 'SUMMARY_OF_THE_SCAN=' >> $GITHUB_ENV
+          
+  #         echo 'SUMMARY_OF_THE_SCAN<<EOF' >> $GITHUB_ENV
+  #         cat pr_body >> $GITHUB_ENV
+  #         echo 'EOF' >> $GITHUB_ENV
+          
+  #     - name: Updare the PR
+  #       uses: tzkhan/pr-update-action@v2
+  #       with:
+  #         repo-token: "${{ secrets.GITHUB_TOKEN }}"
+  #         base-branch-regex: '[a-z\d-_.\\/]+'
+  #         # head-branch-regex: '${{ env.THIS_BRANCH }}-\d+'
+  #         # title-template: '[%headbranch%] '
+  #         body-template: |           
+  #           ${{ env.SUMMARY_OF_THE_SCAN }}
+  #         body-update-action: 'suffix'
+  #         body-uppercase-base-match: false
+
+  #     - name: Developers - View Complete Report
+        
+  #       run: |
+  #         trivy image --severity HIGH,CRITICAL ${{ env.DOCKER_IMAGE_TO_SCAN }}
+  
+        
+  #     # - name: Slack Notification
+  #     #   uses: rtCamp/action-slack-notify@v2
+  #     #   if: ${{ env.CRITICAL_VULNERABILITIES_FOUND }} == 'true'
+  #     #   env:
+  #     #     SLACK_CHANNEL: trivy-scans
+  #     #     SLACK_COLOR: '#FF0000' #${{ job.status }} # or a specific color like 'good' or '#ff00ff'
+  #     #     SLACK_ICON: https://github.com/rtCamp.png?size=48
+  #     #     SLACK_MESSAGE: '> <!here> Please fix the vulnerabilities :rocket:'
+  #     #     SLACK_TITLE: ":bangbang: *CRITICAL Vulnerabilities Found!*"
+  #     #     SLACK_USERNAME: e-bot7
+  #     #     SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
+  #     #     MSG_MINIMAL: actions url
+  #     #     SLACK_FOOTER: Trivy | e-bot7
+  #     #     SLACK_LINK_NAMES: true
+  #     #     SLACK_ICON_EMOJI: ":bangbang:"
+
+  #     - name: Send Slack Notification
+  #       id: slack
+  #       uses: slackapi/slack-github-action@v1.19.0
+  #       if: (${{ env.CRITICAL_VULNERABILITIES_FOUND }} == 'true') || (${{ env.HIGH_VULNERABILITIES_FOUND }} == 'true')
+  #       with:
+  #         channel-id: 'C03K0R0QTU3'
+  #         # This data can be any valid JSON from a previous step in the GitHub Action
+  #         # slack-message: "GitHub build result: ${{ job.status }}\n${{ github.event.pull_request.html_url || github.event.head_commit.url }}"
+  #         payload: |
+  #           {
+  #             "attachments": [
+  #               {
+  #                 "color": "${{ env.SLACK_ATTACHMENT_BAR_COLOR }}",
+  #                 "blocks": [
+  #                   {
+  #                     "type": "header",
+  #                     "text": {
+  #                       "type": "plain_text",
+  #                       "text": "${{ env.TEST_RESULT_EMOJI }} ${{ env.SUMMARY_REPORT_MSG }}",
+  #                       "emoji": true
+  #                     }
+  #                   },
+  #                   {
+  #                     "type": "header",
+  #                     "text": {
+  #                       "type": "plain_text",
+  #                       "text": "Scan Summary",
+  #                       "emoji": true
+  #                     }
+  #                   },
+  #                   {
+  #                     "type": "divider"
+  #                   },
+  #                   {
+  #                     "type": "section",
+  #                     "fields": [
+  #                       {
+  #                         "type": "mrkdwn",
+  #                         "text": "```Severity```"
+  #                       },
+  #                       {
+  #                         "type": "mrkdwn",
+  #                         "text": "```Vulnerability Count```"
+  #                       },
+  #                       {
+  #                         "type": "mrkdwn",
+  #                         "text": "${{ env.CRITICAL_EMOJI }} Critical"
+  #                       },
+  #                       {
+  #                         "type": "mrkdwn",
+  #                         "text": "${{ env.CRITICAL_NUMBER_OF_VULNERABILITIES }}"
+  #                       },
+  #                       {
+  #                         "type": "mrkdwn",
+  #                         "text": "${{ env.HIGH_EMOJI }} High"
+  #                       },
+  #                       {
+  #                         "type": "mrkdwn",
+  #                         "text": "${{ env.HIGH_NUMBER_OF_VULNERABILITIES }}"
+  #                       }
+  #                     ]
+  #                   },
+  #                   {
+  #                     "type": "section",
+  #                     "text": {
+  #                       "type": "mrkdwn",
+  #                       "text": ":memo: See the Full Scanning Report"
+  #                     },
+  #                     "accessory": {
+  #                       "type": "button",
+  #                       "text": {
+  #                         "type": "plain_text",
+  #                         "text": "View Report",
+  #                         "emoji": true
+  #                       },
+  #                       "value": "report",
+  #                       "url": "${{ env.GITHUB_ACTION_URL }}",
+  #                       "action_id": "button-action"
+  #                     }
+  #                   }
+  #                 ]
+  #               }
+  #             ]
+  #           }                              
+  #       env:
+  #         SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK }}
+  #         SLACK_WEBHOOK_TYPE: INCOMING_WEBHOOK
+
+
+
+
+
+
+
+  VulnerabilityScanner:
+    runs-on: e-bot7
+    steps:
+
+      - name: Checkout code
+        uses: actions/checkout@v3     
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_KEY }}
+          aws-region: eu-central-1
+
+
+      - name: Login to Amazon ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v1  
+
+      - name: Set Docker Image Env
+        run: |
+          ACCOUNT_ID=$(aws sts get-caller-identity | jq -r '.Account')
+          echo "DOCKER_IMAGE_TO_SCAN=${ACCOUNT_ID}.dkr.ecr.eu-central-1.amazonaws.com/${IMAGE}:${IMAGE_ID}" >> $GITHUB_ENV
+
+      - name: pull images
+        run: |
+          docker pull ${{ env.TEST_IMAGE }}
+
+      - name: Trivy Scane - Unknown, Low and Medium Vulnerabilities
+        uses: aquasecurity/trivy-action@master
+        with:
+          image-ref: '${{ env.DOCKER_IMAGE_TO_SCAN }}'
+          severity: 'HIGH,CRITICAL'
+          format: 'table'
+          template: "@${{ env.PWD }}/default.tpl" 
+          output: "trivy-scan-results.txt"
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_KEY }}
 
       # - name: Trivy Scane - High and Critical Vulnerabilities
       #   uses: aquasecurity/trivy-action@master
       #   with:
-      #     image-ref: '${{ env.TEST_IMAGE }}' #'${{ env.DOCKER_IMAGE_TO_SCAN }}'
+      #     image-ref: '${{ env.DOCKER_IMAGE_TO_SCAN }}'
       #     severity: 'HIGH,CRITICAL'
       #     format: "sarif"
       #     template: "@/contrib/sarif.tpl"
@@ -293,9 +289,9 @@ jobs:
           # category: my-analysis-tool
           # wait-for-processing: "false"
           
-      # - name: Remove Local Images
-      #   run: |
-      #     docker rmi -f 6a7b4d || true #$(docker images -aq) 
+      - name: Cat the Scan Result
+        run: |
+          cat trivy-scan-results.txt
 
       # - name: Daily Vulnerability Scan
       #   uses: lazy-actions/gitrivy@v3
