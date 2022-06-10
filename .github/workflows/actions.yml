@@ -16,8 +16,6 @@ jobs:
   trivy:
     runs-on: ubuntu-latest
     steps:
-
-
       - name: Trivy Scan
         id: trivy
         uses: jananathbanuka/ecr-scan-poc-base@main
