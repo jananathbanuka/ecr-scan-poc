@@ -26,12 +26,12 @@ jobs:
         uses: jananathbanuka/ecr-scan-poc-base@main
         with:
           IMAGE: node:0.10.38-wheezy
-          NOTIFICATION_TYPES: 'pull_request,slack'
+          # NOTIFICATION_TYPES: 'pull_request,slack'
           GITHUB_ACCESS_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
           SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK }}
 
           
-          
+
   #     - name: Checkout code
   #       uses: actions/checkout@v3
     
