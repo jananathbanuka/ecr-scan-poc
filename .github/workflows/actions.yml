@@ -4,6 +4,7 @@ on:
   pull_request:
     types: [opened, reopened, synchronize]
 
+
 # env:
 #   IMAGE: "ecr-scan-poc"
 #   IMAGE_ID: "3"
