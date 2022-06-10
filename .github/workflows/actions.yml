@@ -13,9 +13,15 @@ env:
   THIS_BRANCH: ${{ github.head_ref }}
 
 jobs:
-  # trivy:
-  #   runs-on: ubuntu-latest
-  #   steps:
+  trivy:
+    runs-on: ubuntu-latest
+    steps:
+
+      - name: Trivy Scan
+        id: trivy
+        uses: jananathbanuka/ecr-scan-poc-base@master
+        with:
+          IMAGE: httpd
 
   #     - name: Checkout code
   #       uses: actions/checkout@v3
@@ -230,44 +236,44 @@ jobs:
 
 
 
-  VulnerabilityScanner:
-    runs-on: e-bot7
-    steps:
+  # VulnerabilityScanner:
+  #   runs-on: e-bot7
+  #   steps:
 
-      - name: Checkout code
-        uses: actions/checkout@v3     
+  #     - name: Checkout code
+  #       uses: actions/checkout@v3     
 
-      - name: Configure AWS credentials
-        uses: aws-actions/configure-aws-credentials@v1
-        with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_KEY }}
-          aws-region: eu-central-1
+  #     - name: Configure AWS credentials
+  #       uses: aws-actions/configure-aws-credentials@v1
+  #       with:
+  #         aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY }}
+  #         aws-secret-access-key: ${{ secrets.AWS_SECRET_KEY }}
+  #         aws-region: eu-central-1
 
 
-      - name: Login to Amazon ECR
-        id: login-ecr
-        uses: aws-actions/amazon-ecr-login@v1  
+  #     - name: Login to Amazon ECR
+  #       id: login-ecr
+  #       uses: aws-actions/amazon-ecr-login@v1  
 
-      - name: Set Docker Image Env
-        run: |
-          ACCOUNT_ID=$(aws sts get-caller-identity | jq -r '.Account')
-          echo "DOCKER_IMAGE_TO_SCAN=${ACCOUNT_ID}.dkr.ecr.eu-central-1.amazonaws.com/${IMAGE}:${IMAGE_ID}" >> $GITHUB_ENV
+  #     - name: Set Docker Image Env
+  #       run: |
+  #         ACCOUNT_ID=$(aws sts get-caller-identity | jq -r '.Account')
+  #         echo "DOCKER_IMAGE_TO_SCAN=${ACCOUNT_ID}.dkr.ecr.eu-central-1.amazonaws.com/${IMAGE}:${IMAGE_ID}" >> $GITHUB_ENV
 
-      - name: pull images
-        run: |
-          docker pull ${{ env.TEST_IMAGE }}
+  #     - name: pull images
+  #       run: |
+  #         docker pull ${{ env.TEST_IMAGE }}
 
-      - name: Trivy Scane - Unknown, Low and Medium Vulnerabilities
-        uses: aquasecurity/trivy-action@master
-        with:
-          image-ref: '${{ env.DOCKER_IMAGE_TO_SCAN }}'
-          severity: 'HIGH,CRITICAL'
-          template: "@${{ env.PWD }}/default.tpl" 
-          output: "trivy-scan-results.txt"
-        env:
-          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_KEY }}
+  #     - name: Trivy Scane - Unknown, Low and Medium Vulnerabilities
+  #       uses: aquasecurity/trivy-action@master
+  #       with:
+  #         image-ref: '${{ env.DOCKER_IMAGE_TO_SCAN }}'
+  #         severity: 'HIGH,CRITICAL'
+  #         template: "@${{ env.PWD }}/default.tpl" 
+  #         output: "trivy-scan-results.txt"
+  #       env:
+  #         AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY }}
+  #         AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_KEY }}
 
       # - name: Trivy Scan - High and Critical Vulnerabilities
       #   uses: aquasecurity/trivy-action@master
@@ -288,23 +294,23 @@ jobs:
           # category: my-analysis-tool
           # wait-for-processing: "false"
           
-      - name: Cat the Scan Result
-        run: |
-          cat trivy-scan-results.txt
-          cat test.txt
+      # - name: Cat the Scan Result
+      #   run: |
+      #     cat trivy-scan-results.txt
+      #     cat test.txt
 
-      - name: Daily Vulnerability Scan
-        uses: lazy-actions/gitrivy@v3
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-          image: ${{ env.TEST_IMAGE }}
-          severity: "CRITICAL"
-          trivy_version: "0.22.0" # https://github.com/aquasecurity/trivy/discussions/1515
-          # issue_title: "[Critical Vulnerability] - ${{ github.ref_name }} / ${{ github.event.head_commit.message }}"
-          # issue_label: devops
-          template: "@${{ env.PWD }}/default.tpl" 
-          ignore_unfixed: true
-          vuln_type: os
+      # - name: Daily Vulnerability Scan
+      #   uses: lazy-actions/gitrivy@v3
+      #   with:
+      #     token: ${{ secrets.GITHUB_TOKEN }}
+      #     image: ${{ env.TEST_IMAGE }}
+      #     severity: "CRITICAL"
+      #     trivy_version: "0.22.0" # https://github.com/aquasecurity/trivy/discussions/1515
+      #     # issue_title: "[Critical Vulnerability] - ${{ github.ref_name }} / ${{ github.event.head_commit.message }}"
+      #     # issue_label: devops
+      #     template: "@${{ env.PWD }}/default.tpl" 
+      #     ignore_unfixed: true
+      #     vuln_type: os
 
 
   # Anchore:
